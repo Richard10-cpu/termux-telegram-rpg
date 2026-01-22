@@ -25,7 +25,6 @@ def check_level_up(player: Player) -> tuple[bool, str | None]:
 
     if player.exp >= required_exp:
         # Повышаем уровень
-        old_level = player.level
         player.level += 1
         player.max_hp += ExperienceConstants.HP_PER_LEVEL
         player.hp = player.max_hp  # Полное лечение при повышении уровня

@@ -11,6 +11,8 @@ player_service = get_player_service()
 @router.message(F.text == "👤 Профиль")
 async def show_profile(message: types.Message) -> None:
     """Показать профиль игрока."""
+    if not message.from_user:
+        return
     player = player_service.get_or_create(message.from_user.id)
     text = format_profile(player)
     await message.answer(text)

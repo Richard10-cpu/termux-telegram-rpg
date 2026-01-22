@@ -18,6 +18,8 @@ async def open_shop(message: types.Message) -> None:
 @router.message(F.text == "🗡️ Купить Меч (50💰)")
 async def buy_sword(message: types.Message) -> None:
     """Купить меч."""
+    if not message.from_user:
+        return
     player = player_service.get_or_create(message.from_user.id)
     success, msg = purchase_item(player, "steel_sword")
     if success:
@@ -28,6 +30,8 @@ async def buy_sword(message: types.Message) -> None:
 @router.message(F.text == "🛡️ Купить Броню (80💰)")
 async def buy_armor(message: types.Message) -> None:
     """Купить броню."""
+    if not message.from_user:
+        return
     player = player_service.get_or_create(message.from_user.id)
     success, msg = purchase_item(player, "leather_armor")
     if success:

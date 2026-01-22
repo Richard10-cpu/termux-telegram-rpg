@@ -5,7 +5,6 @@
 import asyncio
 import logging
 import os
-from typing import Any, Coroutine, Protocol
 from dotenv import load_dotenv
 
 from aiogram import Bot, Dispatcher
@@ -28,19 +27,9 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 if not TELEGRAM_BOT_TOKEN:
     raise ValueError("TELEGRAM_BOT_TOKEN environment variable is not set")
 
-class _PollingDispatcher(Protocol):
-    def start_polling(
-        self,
-        *bots: Bot,
-        polling_timeout: int = 10,
-        **kwargs: Any,
-    ) -> Coroutine[Any, Any, None]:
-        ...
-
-
 # Инициализация бота и диспетчера
 bot: Bot = Bot(token=TELEGRAM_BOT_TOKEN)
-dp: _PollingDispatcher = Dispatcher()
+dp: Dispatcher = Dispatcher()
 
 # Регистрация роутеров
 dp.include_router(commands_router)
@@ -63,7 +52,7 @@ async def main() -> None:
     print("📡 Начинаем polling...")
 
     try:
-        await dp.start_polling(bot, polling_timeout=10)
+        await dp.start_polling(bot)
     except Exception as e:
         print(f"❌ Ошибка polling: {e}")
         import traceback

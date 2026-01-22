@@ -94,7 +94,7 @@ def format_quest_status(player: Player) -> str:
 
     status = "✅ Выполнен" if kills >= target else f"🔄 В прогрессе: {kills}/{target}"
 
-    text = f"📜 Ежедневный квест\n"
+    text = "📜 Ежедневный квест\n"
     text += f"🎯 Убить монстров: {status}\n"
     text += f"💰 Награда: {QuestConstants.DAILY_REWARD_GOLD} золота\n\n"
 

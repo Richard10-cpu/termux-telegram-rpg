@@ -1,7 +1,7 @@
 """Логика боя."""
 import random
 from dataclasses import dataclass
-from models import Player, Monster, MonsterTemplate
+from models import Player, Monster
 from data import MONSTER_TEMPLATES, LOCATIONS
 
 
@@ -26,7 +26,7 @@ class BattleResult:
         else:
             msg = f"💀 {self.log}Вы проиграли...\n"
             msg += f"💸 Потеряно золота: {self.gold_lost}\n"
-            msg += f"💡 Отдохните и попробуйте снова!"
+            msg += "💡 Отдохните и попробуйте снова!"
             return msg
 
 

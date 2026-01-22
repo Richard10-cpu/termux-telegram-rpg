@@ -2,7 +2,7 @@
 from aiogram import Router, F, types
 from services import get_player_service
 from keyboards import quest_keyboard, main_keyboard
-from game_logic import claim_daily_reward, format_quest_status, add_experience
+from game_logic import claim_daily_reward, format_quest_status
 
 router = Router()
 
@@ -12,6 +12,8 @@ player_service = get_player_service()
 @router.message(F.text == "📜 Квесты")
 async def show_quests(message: types.Message) -> None:
     """Показать квесты."""
+    if not message.from_user:
+        return
     player = player_service.get_or_create(message.from_user.id)
     text = format_quest_status(player)
     player_service.save_player(player)
@@ -21,6 +23,8 @@ async def show_quests(message: types.Message) -> None:
 @router.message(F.text == "📦 Забрать награду")
 async def claim_quest_reward(message: types.Message) -> None:
     """Получить награду за квест."""
+    if not message.from_user:
+        return
     player = player_service.get_or_create(message.from_user.id)
     success, msg = claim_daily_reward(player)
     if success:
@@ -34,6 +38,8 @@ async def claim_quest_reward(message: types.Message) -> None:
 @router.message(F.text == "🔄 Обновить")
 async def refresh_quests(message: types.Message) -> None:
     """Обновить информацию о квестах."""
+    if not message.from_user:
+        return
     player = player_service.get_or_create(message.from_user.id)
     text = format_quest_status(player)
     player_service.save_player(player)

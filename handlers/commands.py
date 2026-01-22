@@ -1,5 +1,5 @@
 """Обработчики команд."""
-from aiogram import Router, F, types
+from aiogram import Router, types
 from aiogram.filters import Command
 from services import get_player_service
 from keyboards import main_keyboard
@@ -14,6 +14,8 @@ player_service = get_player_service()
 @router.message(Command("start"))
 async def cmd_start(message: types.Message) -> None:
     """Команда /start - начало игры."""
+    if not message.from_user:
+        return
     player_service.get_or_create(message.from_user.id)
     await message.answer(
         "🕹️ Добро пожаловать в Termux RPG! Исследуй мир, сражайся и прокачивайся.",
@@ -24,6 +26,8 @@ async def cmd_start(message: types.Message) -> None:
 @router.message(Command("equip"))
 async def cmd_equip(message: types.Message) -> None:
     """Команда /equip - экипировать предмет."""
+    if not message.from_user or not message.text:
+        return
     player = player_service.get_or_create(message.from_user.id)
 
     # Получаем название предмета из команды

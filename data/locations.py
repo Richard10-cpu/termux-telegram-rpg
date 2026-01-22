@@ -15,20 +15,23 @@ LOCATIONS: dict[str, Location] = {
         name="🌲 Тёмный лес",
         emoji="🌲",
         enemies=["goblin", "wolf"],
-        description="Тёмный лес полный опасностей."
+        description="Тёмный лес полный опасностей.",
+        image_path="assets/images/locations/forest.png"
     ),
     "cave": Location(
         key="cave",
         name="🕳️ Пещера",
         emoji="🕳️",
         enemies=["skeleton", "orc"],
-        description="Тёмная пещера с нежитью и орками."
+        description="Тёмная пещера с нежитью и орками.",
+        image_path="assets/images/locations/cave.png"
     ),
     "mountain": Location(
         key="mountain",
         name="⛰️ Гора",
         emoji="⛰️",
         enemies=["orc", "dragon"],
-        description="Опасная гора с драконами!"
+        description="Опасная гора с драконами!",
+        image_path="assets/images/locations/mountain.png"
     )
 }

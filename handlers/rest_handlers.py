@@ -11,6 +11,8 @@ player_service = get_player_service()
 @router.message(F.text == "☕ Отдых (10💰)")
 async def rest_and_heal(message: types.Message) -> None:
     """Отдохнуть и восстановить здоровье."""
+    if not message.from_user:
+        return
     player = player_service.get_or_create(message.from_user.id)
     if player.gold >= 10:
         player.gold -= 10

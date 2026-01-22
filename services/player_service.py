@@ -8,13 +8,15 @@ class PlayerService:
     """Сервис для работы с игроками (синглтон)."""
 
     _instance: Optional['PlayerService'] = None
+    _repository: DataRepository
+    _cache: dict[int, Player]
 
     def __new__(cls, repository: Optional[DataRepository] = None):
         """Создать или получить экземпляр синглтона."""
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance._repository = repository or DataRepository()
-            cls._instance._cache: dict[int, Player] = {}
+            cls._instance._cache = {}
         return cls._instance
 
     @property
@@ -80,13 +82,6 @@ class PlayerService:
         return players[:limit]
 
 
-# Глобальный экземпляр сервиса
-_player_service: Optional[PlayerService] = None
-
-
 def get_player_service() -> PlayerService:
     """Получить глобальный экземпляр PlayerService."""
-    global _player_service
-    if _player_service is None:
-        _player_service = PlayerService()
-    return _player_service
+    return PlayerService()
