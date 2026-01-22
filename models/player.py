@@ -1,6 +1,9 @@
 """Модели данных игрока."""
 from dataclasses import dataclass, field, asdict
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from models.story import StoryProgress
 
 
 @dataclass
@@ -61,6 +64,7 @@ class Player:
     quests: Dict[str, DailyQuest] = field(default_factory=lambda: {"daily": DailyQuest()})
     achievements: List[str] = field(default_factory=list)
     total_kills: int = 0
+    story_progress: Optional['StoryProgress'] = None
 
     def to_dict(self) -> dict:
         """Преобразовать в словарь для сохранения в JSON."""
@@ -77,12 +81,15 @@ class Player:
             'equipment': self.equipment.to_dict(),
             'quests': {k: v.to_dict() for k, v in self.quests.items()},
             'achievements': self.achievements,
-            'total_kills': self.total_kills
+            'total_kills': self.total_kills,
+            'story_progress': self.story_progress.to_dict() if self.story_progress else None
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> 'Player':
         """Создать из словаря."""
+        from models.story import StoryProgress
+
         equipment = Equipment.from_dict(data.get('equipment', {}))
 
         quests_data = data.get('quests', {})
@@ -92,6 +99,9 @@ class Player:
         }
         if 'daily' not in quests:
             quests['daily'] = DailyQuest()
+
+        story_progress_data = data.get('story_progress')
+        story_progress = StoryProgress.from_dict(story_progress_data) if story_progress_data else None
 
         return cls(
             user_id=data['user_id'],
@@ -106,5 +116,6 @@ class Player:
             equipment=equipment,
             quests=quests,
             achievements=data.get('achievements', []),
-            total_kills=data.get('total_kills', 0)
+            total_kills=data.get('total_kills', 0),
+            story_progress=story_progress
         )

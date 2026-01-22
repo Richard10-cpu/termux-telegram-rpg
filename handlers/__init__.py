@@ -6,6 +6,7 @@ from .shop_handlers import router as shop_router
 from .map_handlers import router as map_router
 from .quest_handlers import router as quest_router
 from .rest_handlers import router as rest_router
+from .story_handlers import router as story_router
 
 __all__ = [
     'commands_router',
@@ -15,4 +16,5 @@ __all__ = [
     'map_router',
     'quest_router',
     'rest_router',
+    'story_router',
 ]

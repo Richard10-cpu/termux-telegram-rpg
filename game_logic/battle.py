@@ -3,6 +3,7 @@ import random
 from dataclasses import dataclass
 from models import Player, Monster
 from data import MONSTER_TEMPLATES, LOCATIONS
+from data.monsters import BOSS_NAME_TO_KEY
 
 
 @dataclass
@@ -105,3 +106,13 @@ def apply_battle_result(player: Player, result: BattleResult) -> None:
         player.total_kills += 1
     else:
         player.gold -= result.gold_lost
+
+
+def create_boss_monster(boss_name: str) -> Monster | None:
+    """Создать монстра-босса по имени."""
+    boss_key = BOSS_NAME_TO_KEY.get(boss_name)
+    if not boss_key or boss_key not in MONSTER_TEMPLATES:
+        return None
+
+    template = MONSTER_TEMPLATES[boss_key]
+    return Monster.from_template(template)

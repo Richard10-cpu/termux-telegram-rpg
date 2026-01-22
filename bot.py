@@ -16,7 +16,8 @@ from handlers import (
     shop_router,
     map_router,
     quest_router,
-    rest_router
+    rest_router,
+    story_router
 )
 
 # Загрузка переменных окружения
@@ -39,6 +40,7 @@ dp.include_router(shop_router)
 dp.include_router(map_router)
 dp.include_router(quest_router)
 dp.include_router(rest_router)
+dp.include_router(story_router)
 
 
 async def main() -> None:
