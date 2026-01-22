@@ -13,11 +13,10 @@ main_keyboard = ReplyKeyboardMarkup(
             KeyboardButton(text="📜 Квесты")
         ],
         [
-            KeyboardButton(text="📖 Сюжет"),
-            KeyboardButton(text="🛒 Магазин")
+            KeyboardButton(text="🛒 Магазин"),
+            KeyboardButton(text="☕ Отдых (10💰)")
         ],
         [
-            KeyboardButton(text="☕ Отдых (10💰)"),
             KeyboardButton(text="🏆 Рейтинг")
         ]
     ],

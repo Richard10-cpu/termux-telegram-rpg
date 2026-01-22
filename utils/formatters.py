@@ -1,6 +1,7 @@
 """Утилиты форматирования сообщений."""
 from models import Player
 from game_logic import format_achievements
+from game_logic.story import get_story_progress, get_current_chapter
 
 
 def format_profile(player: Player) -> str:
@@ -14,6 +15,21 @@ def format_profile(player: Player) -> str:
     # Достижения
     achievements_text = format_achievements(player.achievements)
 
+    # Сюжет
+    progress = get_story_progress(player)
+    current_chapter = get_current_chapter(player)
+    story_text = ""
+
+    if current_chapter:
+        boss_status = ""
+        if current_chapter.boss_name:
+            if progress.is_boss_defeated(current_chapter.boss_name):
+                boss_status = " ✅"
+            else:
+                boss_status = " ⚔️"
+
+        story_text = f"\n\n📖 Сюжет: Глава {current_chapter.chapter_id}{boss_status}\n{current_chapter.title}"
+
     text = (
         f"👤 Уровень: {player.level}\n"
         f"❤️ HP: {player.hp}/{player.max_hp}\n"
@@ -23,6 +39,7 @@ def format_profile(player: Player) -> str:
         f"🛡️ Броня: {armor}\n"
         f"🎒 Инвентарь: {inv}"
         f"{achievements_text}"
+        f"{story_text}"
     )
 
     return text

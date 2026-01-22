@@ -1,5 +1,7 @@
 """Логика опыта и уровней."""
 from models import Player
+from game_logic.story import get_current_chapter
+from data.story_chapters import get_chapter
 
 
 class ExperienceConstants:
@@ -24,6 +26,8 @@ def check_level_up(player: Player) -> tuple[bool, str | None]:
     required_exp = exp_for_level(player.level)
 
     if player.exp >= required_exp:
+        old_level = player.level
+
         # Повышаем уровень
         player.level += 1
         player.max_hp += ExperienceConstants.HP_PER_LEVEL
@@ -35,6 +39,12 @@ def check_level_up(player: Player) -> tuple[bool, str | None]:
             f"Теперь вы {player.level} уровня! "
             f"Сила и HP выросли."
         )
+
+        # Проверяем, открылась ли новая глава
+        current_chapter = get_current_chapter(player)
+        if current_chapter and current_chapter.unlock_level == player.level:
+            msg += f"\n\n📖 НОВАЯ ГЛАВА ДОСТУПНА!\n{current_chapter.title}"
+
         return True, msg
 
     return False, None

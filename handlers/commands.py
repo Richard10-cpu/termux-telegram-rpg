@@ -4,6 +4,7 @@ from aiogram.filters import Command
 from services import get_player_service
 from keyboards import main_keyboard
 from game_logic import equip_item
+from game_logic.story import get_current_chapter
 from utils import format_top_players
 
 router = Router()
@@ -16,11 +17,21 @@ async def cmd_start(message: types.Message) -> None:
     """Команда /start - начало игры."""
     if not message.from_user:
         return
-    player_service.get_or_create(message.from_user.id)
-    await message.answer(
-        "🕹️ Добро пожаловать в Termux RPG! Исследуй мир, сражайся и прокачивайся.",
-        reply_markup=main_keyboard
-    )
+    player = player_service.get_or_create(message.from_user.id)
+
+    # Получаем текущую главу сюжета
+    current_chapter = get_current_chapter(player)
+
+    welcome_msg = "🕹️ Добро пожаловать в Termux RPG!\n\n"
+
+    if current_chapter:
+        welcome_msg += f"📖 {current_chapter.title}\n\n"
+        welcome_msg += f"{current_chapter.description}\n\n"
+        welcome_msg += "⚔️ Используйте кнопки ниже для взаимодействия с игрой!"
+    else:
+        welcome_msg += "Исследуй мир, сражайся и прокачивайся!"
+
+    await message.answer(welcome_msg, reply_markup=main_keyboard)
 
 
 @router.message(Command("equip"))
