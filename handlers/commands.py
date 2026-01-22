@@ -25,11 +25,12 @@ async def cmd_start(message: types.Message) -> None:
     welcome_msg = "🕹️ Добро пожаловать в Termux RPG!\n\n"
 
     if current_chapter:
-        welcome_msg += f"📖 {current_chapter.title}\n\n"
-        welcome_msg += f"{current_chapter.description}\n\n"
-        welcome_msg += "⚔️ Используйте кнопки ниже для взаимодействия с игрой!"
+        welcome_msg += f"📖 {current_chapter.title}\n"
+        welcome_msg += f"📍 Цель: Победить {current_chapter.boss_name}\n\n"
+        welcome_msg += "📜 Откройте 'Квесты' для деталей сюжета"
     else:
-        welcome_msg += "Исследуй мир, сражайся и прокачивайся!"
+        welcome_msg += "🏆 Вы прошли все главы сюжета!\n"
+        welcome_msg += "Продолжайте сражаться и выполнять ежедневные квесты!"
 
     await message.answer(welcome_msg, reply_markup=main_keyboard)
 

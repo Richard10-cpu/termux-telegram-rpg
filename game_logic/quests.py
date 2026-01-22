@@ -1,6 +1,8 @@
-"""Система квестов."""
+"""Система квестов - сюжетные и побочные."""
 from datetime import datetime
 from models import Player
+from game_logic.story import get_story_progress, get_current_chapter
+from data.story_chapters import get_chapter
 
 
 class QuestConstants:
@@ -83,8 +85,70 @@ def claim_daily_reward(player: Player) -> tuple[bool, str]:
     return True, msg
 
 
-def format_quest_status(player: Player) -> str:
-    """Отформатировать статус квеста."""
+def format_story_quest(player: Player) -> str:
+    """Отформатировать сюжетный квест."""
+    progress = get_story_progress(player)
+    current_chapter = get_current_chapter(player)
+
+    if not current_chapter:
+        return "🏆 Все сюжетные главы пройдены!\n"
+
+    text = f"📖 СЮЖЕТНЫЙ КВЕСТ\n"
+    text += f"━━━━━━━━━━━━━━━━━━━━\n"
+    text += f"{current_chapter.title}\n\n"
+
+    # Проверяем требования
+    requirements_met = True
+    req_text = ""
+
+    # Требование уровня
+    if player.level < current_chapter.unlock_level:
+        requirements_met = False
+        req_text += f"❌ Уровень: {player.level}/{current_chapter.unlock_level}\n"
+    else:
+        req_text += f"✅ Уровень: {player.level}/{current_chapter.unlock_level}\n"
+
+    # Требование локации
+    if current_chapter.location_requirement:
+        location_names = {
+            "village": "Деревня",
+            "forest": "Тёмный лес",
+            "cave": "Пещера",
+            "mountain": "Гора"
+        }
+        req_location = location_names.get(current_chapter.location_requirement, current_chapter.location_requirement)
+        current_location = location_names.get(player.location, player.location)
+
+        if player.location != current_chapter.location_requirement:
+            requirements_met = False
+            req_text += f"❌ Локация: {current_location} → {req_location}\n"
+        else:
+            req_text += f"✅ Локация: {req_location}\n"
+
+    text += req_text
+
+    # Статус босса
+    if current_chapter.boss_name:
+        if progress.is_boss_defeated(current_chapter.boss_name):
+            text += f"\n✅ Босс побеждён: {current_chapter.boss_name}\n"
+        else:
+            text += f"\n⚔️ Цель: Победить {current_chapter.boss_name}\n"
+
+            if requirements_met:
+                text += "💡 Нажмите '⚔️ В бой!' для сражения с боссом!\n"
+
+    # Награды
+    text += f"\n🎁 Награда за главу:\n"
+    text += f"   💰 {current_chapter.reward_gold} золота\n"
+    text += f"   📊 {current_chapter.reward_exp} опыта\n"
+    if current_chapter.reward_item:
+        text += f"   🎁 {current_chapter.reward_item}\n"
+
+    return text
+
+
+def format_daily_quest(player: Player) -> str:
+    """Отформатировать ежедневный квест."""
     update_daily_quest(player)
 
     quest = player.quests["daily"]
@@ -92,17 +156,34 @@ def format_quest_status(player: Player) -> str:
     kills = quest.kills
     claimed = quest.reward_claimed
 
-    status = "✅ Выполнен" if kills >= target else f"🔄 В прогрессе: {kills}/{target}"
+    text = "📋 ЕЖЕДНЕВНЫЙ КВЕСТ\n"
+    text += "━━━━━━━━━━━━━━━━━━━━\n"
+    text += "Охота на монстров\n\n"
 
-    text = "📜 Ежедневный квест\n"
-    text += f"🎯 Убить монстров: {status}\n"
-    text += f"💰 Награда: {QuestConstants.DAILY_REWARD_GOLD} золота\n\n"
+    # Прогресс-бар
+    progress_pct = min(kills / target, 1.0)
+    filled = int(progress_pct * 10)
+    empty = 10 - filled
+    progress_bar = "█" * filled + "░" * empty
+
+    text += f"🎯 Прогресс: [{progress_bar}] {kills}/{target}\n"
 
     if claimed:
-        text += "✅ Награда получена!"
+        text += "\n✅ Награда получена!\n"
     elif kills >= target:
-        text += "🎁 Квест выполнен! Заберите награду."
+        text += "\n🎁 Выполнено! Заберите награду.\n"
     else:
-        text += f"💪 Осталось убить: {target - kills}"
+        text += f"\n💪 Осталось: {target - kills} монстров\n"
+
+    text += f"\n💰 Награда: {QuestConstants.DAILY_REWARD_GOLD} золота, {QuestConstants.DAILY_REWARD_EXP} опыта\n"
+
+    return text
+
+
+def format_quest_status(player: Player) -> str:
+    """Отформатировать полный статус квестов."""
+    text = format_story_quest(player)
+    text += "\n"
+    text += format_daily_quest(player)
 
     return text
