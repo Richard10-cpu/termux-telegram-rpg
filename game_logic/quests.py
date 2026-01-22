@@ -97,35 +97,33 @@ def format_story_quest(player: Player) -> str:
     text += f"━━━━━━━━━━━━━━━━━━━━\n"
     text += f"{current_chapter.title}\n\n"
 
-    # Проверяем требования
+    # Проверяем требования - показываем только невыполненные
     requirements_met = True
     req_text = ""
 
-    # Требование уровня
+    location_names = {
+        "village": "Деревня",
+        "forest": "Тёмный лес",
+        "cave": "Пещера",
+        "mountain": "Гора"
+    }
+
+    # Требование уровня - показываем только если не выполнено
     if player.level < current_chapter.unlock_level:
         requirements_met = False
-        req_text += f"❌ Уровень: {player.level}/{current_chapter.unlock_level}\n"
-    else:
-        req_text += f"✅ Уровень: {player.level}/{current_chapter.unlock_level}\n"
+        req_text += f"⚠️ Требуется уровень {current_chapter.unlock_level} (у вас {player.level})\n"
 
-    # Требование локации
+    # Требование локации - показываем только если не выполнено
     if current_chapter.location_requirement:
-        location_names = {
-            "village": "Деревня",
-            "forest": "Тёмный лес",
-            "cave": "Пещера",
-            "mountain": "Гора"
-        }
         req_location = location_names.get(current_chapter.location_requirement, current_chapter.location_requirement)
-        current_location = location_names.get(player.location, player.location)
 
         if player.location != current_chapter.location_requirement:
             requirements_met = False
-            req_text += f"❌ Локация: {current_location} → {req_location}\n"
-        else:
-            req_text += f"✅ Локация: {req_location}\n"
+            current_location = location_names.get(player.location, player.location)
+            req_text += f"⚠️ Идите в локацию: {req_location}\n"
 
-    text += req_text
+    if req_text:
+        text += req_text + "\n"
 
     # Статус босса
     if current_chapter.boss_name:
