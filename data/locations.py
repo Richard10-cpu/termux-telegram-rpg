@@ -7,7 +7,8 @@ LOCATIONS: dict[str, Location] = {
         name="🏘️ Деревня",
         emoji="🏘️",
         enemies=[],
-        description="Мирное место для отдыха и торговли."
+        description="Мирное место для отдыха и торговли.",
+        image_path="assets/images/locations/village.png"
     ),
     "forest": Location(
         key="forest",

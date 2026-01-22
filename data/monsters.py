@@ -10,7 +10,8 @@ MONSTER_TEMPLATES: dict[str, MonsterTemplate] = {
         exp=15,
         gold_min=3,
         gold_max=8,
-        min_level=1
+        min_level=1,
+        image_path="assets/images/monsters/goblin.png"
     ),
     "wolf": MonsterTemplate(
         key="wolf",
@@ -20,7 +21,8 @@ MONSTER_TEMPLATES: dict[str, MonsterTemplate] = {
         exp=20,
         gold_min=5,
         gold_max=12,
-        min_level=1
+        min_level=1,
+        image_path="assets/images/monsters/wolf.png"
     ),
     "skeleton": MonsterTemplate(
         key="skeleton",
@@ -30,7 +32,8 @@ MONSTER_TEMPLATES: dict[str, MonsterTemplate] = {
         exp=25,
         gold_min=8,
         gold_max=15,
-        min_level=3
+        min_level=3,
+        image_path="assets/images/monsters/skeleton.png"
     ),
     "orc": MonsterTemplate(
         key="orc",
@@ -40,7 +43,8 @@ MONSTER_TEMPLATES: dict[str, MonsterTemplate] = {
         exp=35,
         gold_min=10,
         gold_max=20,
-        min_level=5
+        min_level=5,
+        image_path="assets/images/monsters/orc.png"
     ),
     "dragon": MonsterTemplate(
         key="dragon",
@@ -50,6 +54,7 @@ MONSTER_TEMPLATES: dict[str, MonsterTemplate] = {
         exp=50,
         gold_min=20,
         gold_max=40,
-        min_level=8
+        min_level=8,
+        image_path="assets/images/monsters/dragon.png"
     )
 }

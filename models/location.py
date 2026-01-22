@@ -11,6 +11,7 @@ class Location:
     emoji: str
     enemies: List[str]  # Список ключей монстров
     description: str
+    image_path: str = ""
 
     @property
     def has_enemies(self) -> bool:

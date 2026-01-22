@@ -1,7 +1,7 @@
 """Модели данных предметов."""
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
+
 
 
 class ItemType(Enum):
@@ -22,6 +22,7 @@ class Item:
     power_bonus: int = 0
     hp_bonus: int = 0
     max_hp_bonus: int = 0
+    image_path: str = ""
 
     @property
     def is_equipable(self) -> bool:

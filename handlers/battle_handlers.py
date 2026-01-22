@@ -1,5 +1,6 @@
 """Обработчики боев."""
 from aiogram import Router, F, types
+from aiogram.types import FSInputFile
 from services import get_player_service
 from game_logic import (
     select_monster_for_location,
@@ -20,6 +21,8 @@ player_service = get_player_service()
 @router.message(F.text == "⚔️ В бой!")
 async def start_battle(message: types.Message) -> None:
     """Начать бой."""
+    if not message.from_user:
+        return
     player = player_service.get_or_create(message.from_user.id)
 
     # Проверка здоровья
@@ -52,7 +55,7 @@ async def start_battle(message: types.Message) -> None:
     if result.victory:
         # Обновление дневного квеста
         completed, quest_msg = increment_kills(player)
-        if completed:
+        if completed and quest_msg:
             msg += quest_msg
 
         # Проверка уровня
@@ -66,4 +69,8 @@ async def start_battle(message: types.Message) -> None:
     # Сохранение
     player_service.save_player(player)
 
-    await message.answer(msg)
+    if monster.image_path:
+        photo = FSInputFile(monster.image_path)
+        await message.answer_photo(photo, caption=msg)
+    else:
+        await message.answer(msg)

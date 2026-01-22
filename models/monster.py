@@ -13,6 +13,7 @@ class Monster:
     power: int
     exp: int
     gold_range: Tuple[int, int]
+    image_path: str = ""
 
     @classmethod
     def from_template(cls, template: 'MonsterTemplate') -> 'Monster':
@@ -24,7 +25,8 @@ class Monster:
             max_hp=template.hp,
             power=template.power,
             exp=template.exp,
-            gold_range=(template.gold_min, template.gold_max)
+            gold_range=(template.gold_min, template.gold_max),
+            image_path=template.image_path
         )
 
 
@@ -39,6 +41,7 @@ class MonsterTemplate:
     gold_min: int
     gold_max: int
     min_level: int = 1
+    image_path: str = ""
 
     def is_available_for_level(self, player_level: int) -> bool:
         """Проверить доступность монстра для уровня игрока."""
