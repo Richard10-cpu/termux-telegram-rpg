@@ -41,8 +41,9 @@ class MonsterTemplate:
     gold_min: int
     gold_max: int
     min_level: int = 1
+    max_level: int = 100  # Максимальный уровень для появления монстра
     image_path: str = ""
 
     def is_available_for_level(self, player_level: int) -> bool:
         """Проверить доступность монстра для уровня игрока."""
-        return player_level >= self.min_level
+        return self.min_level <= player_level <= self.max_level

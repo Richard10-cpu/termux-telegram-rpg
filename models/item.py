@@ -27,6 +27,7 @@ class Item:
     spell_damage: int = 0  # Урон заклинания
     spell_heal: int = 0  # Лечение заклинания
     required_level: int = 1  # Требуемый уровень
+    description: str = ""  # Описание предмета
     image_path: str = ""
 
     @property

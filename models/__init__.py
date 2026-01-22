@@ -1,5 +1,5 @@
 """Модели данных RPG игры."""
-from .player import Player, Equipment, DailyQuest
+from .player import Player, Equipment, DailyQuest, BattleState
 from .monster import Monster, MonsterTemplate
 from .location import Location
 from .item import Item, ItemType, ShopItem
@@ -9,6 +9,7 @@ __all__ = [
     'Player',
     'Equipment',
     'DailyQuest',
+    'BattleState',
     'Monster',
     'MonsterTemplate',
     'Location',

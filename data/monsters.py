@@ -11,6 +11,7 @@ MONSTER_TEMPLATES: dict[str, MonsterTemplate] = {
         gold_min=3,
         gold_max=8,
         min_level=1,
+        max_level=10,
         image_path="assets/images/monsters/goblin.png"
     ),
     "wolf": MonsterTemplate(
@@ -22,6 +23,7 @@ MONSTER_TEMPLATES: dict[str, MonsterTemplate] = {
         gold_min=5,
         gold_max=12,
         min_level=1,
+        max_level=10,
         image_path="assets/images/monsters/wolf.png"
     ),
     "skeleton": MonsterTemplate(
@@ -33,6 +35,7 @@ MONSTER_TEMPLATES: dict[str, MonsterTemplate] = {
         gold_min=8,
         gold_max=15,
         min_level=3,
+        max_level=15,
         image_path="assets/images/monsters/skeleton.png"
     ),
     "orc": MonsterTemplate(
@@ -44,6 +47,7 @@ MONSTER_TEMPLATES: dict[str, MonsterTemplate] = {
         gold_min=10,
         gold_max=20,
         min_level=5,
+        max_level=20,
         image_path="assets/images/monsters/orc.png"
     ),
     "dragon": MonsterTemplate(
@@ -55,6 +59,7 @@ MONSTER_TEMPLATES: dict[str, MonsterTemplate] = {
         gold_min=20,
         gold_max=40,
         min_level=8,
+        max_level=100,
         image_path="assets/images/monsters/dragon.png"
     ),
     # Сюжетные боссы
@@ -67,6 +72,7 @@ MONSTER_TEMPLATES: dict[str, MonsterTemplate] = {
         gold_min=30,
         gold_max=50,
         min_level=1,
+        max_level=100,
         image_path="assets/images/monsters/goblin_chief.png"
     ),
     "skeleton_king": MonsterTemplate(
@@ -78,6 +84,7 @@ MONSTER_TEMPLATES: dict[str, MonsterTemplate] = {
         gold_min=50,
         gold_max=80,
         min_level=5,
+        max_level=100,
         image_path="assets/images/monsters/skeleton_king.png"
     ),
     "orc_warlord": MonsterTemplate(
@@ -89,6 +96,7 @@ MONSTER_TEMPLATES: dict[str, MonsterTemplate] = {
         gold_min=100,
         gold_max=150,
         min_level=10,
+        max_level=100,
         image_path="assets/images/monsters/orc_warlord.png"
     ),
     "ancient_dragon": MonsterTemplate(
@@ -100,6 +108,7 @@ MONSTER_TEMPLATES: dict[str, MonsterTemplate] = {
         gold_min=200,
         gold_max=300,
         min_level=15,
+        max_level=100,
         image_path="assets/images/monsters/ancient_dragon.png"
     )
 }
