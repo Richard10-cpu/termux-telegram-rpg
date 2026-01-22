@@ -45,6 +45,72 @@ SHOP_ITEMS: dict[str, ShopItem] = {
             image_path="assets/images/items/steel_axe.png"
         ),
         unique=True
+    ),
+    # Заклинания
+    "fireball": ShopItem(
+        item=Item(
+            key="fireball",
+            name="⚡ Огненный шар",
+            item_type=ItemType.SPELL,
+            cost=100,
+            mana_cost=15,
+            spell_damage=40,
+            required_level=3,
+            image_path="assets/images/spells/fireball.png"
+        ),
+        unique=True
+    ),
+    "heal": ShopItem(
+        item=Item(
+            key="heal",
+            name="✨ Исцеление",
+            item_type=ItemType.SPELL,
+            cost=80,
+            mana_cost=20,
+            spell_heal=50,
+            required_level=2,
+            image_path="assets/images/spells/heal.png"
+        ),
+        unique=True
+    ),
+    "lightning": ShopItem(
+        item=Item(
+            key="lightning",
+            name="⚡ Молния",
+            item_type=ItemType.SPELL,
+            cost=200,
+            mana_cost=25,
+            spell_damage=70,
+            required_level=7,
+            image_path="assets/images/spells/lightning.png"
+        ),
+        unique=True
+    ),
+    "ice_blast": ShopItem(
+        item=Item(
+            key="ice_blast",
+            name="❄️ Ледяной взрыв",
+            item_type=ItemType.SPELL,
+            cost=300,
+            mana_cost=30,
+            spell_damage=90,
+            required_level=12,
+            image_path="assets/images/spells/ice_blast.png"
+        ),
+        unique=True
+    ),
+    "regeneration": ShopItem(
+        item=Item(
+            key="regeneration",
+            name="💚 Регенерация",
+            item_type=ItemType.SPELL,
+            cost=150,
+            mana_cost=25,
+            spell_heal=80,
+            required_level=8,
+            image_path="assets/images/spells/regeneration.png"
+        ),
+        unique=True
     )
 }
 

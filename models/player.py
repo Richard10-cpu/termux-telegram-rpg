@@ -54,11 +54,14 @@ class Player:
     user_id: int
     hp: int = 100
     max_hp: int = 100
+    mana: int = 50
+    max_mana: int = 50
     level: int = 1
     exp: int = 0
     gold: int = 20
     power: int = 10
     inventory: List[str] = field(default_factory=lambda: ["Деревянная палка"])
+    spells: List[str] = field(default_factory=list)  # Изученные заклинания
     location: str = "village"
     equipment: Equipment = field(default_factory=Equipment)
     quests: Dict[str, DailyQuest] = field(default_factory=lambda: {"daily": DailyQuest()})
@@ -72,11 +75,14 @@ class Player:
             'user_id': self.user_id,
             'hp': self.hp,
             'max_hp': self.max_hp,
+            'mana': self.mana,
+            'max_mana': self.max_mana,
             'level': self.level,
             'exp': self.exp,
             'gold': self.gold,
             'power': self.power,
             'inventory': self.inventory,
+            'spells': self.spells,
             'location': self.location,
             'equipment': self.equipment.to_dict(),
             'quests': {k: v.to_dict() for k, v in self.quests.items()},
@@ -107,11 +113,14 @@ class Player:
             user_id=data['user_id'],
             hp=data.get('hp', 100),
             max_hp=data.get('max_hp', 100),
+            mana=data.get('mana', 50),
+            max_mana=data.get('max_mana', 50),
             level=data.get('level', 1),
             exp=data.get('exp', 0),
             gold=data.get('gold', 20),
             power=data.get('power', 10),
             inventory=data.get('inventory', ["Деревянная палка"]),
+            spells=data.get('spells', []),
             location=data.get('location', 'village'),
             equipment=equipment,
             quests=quests,

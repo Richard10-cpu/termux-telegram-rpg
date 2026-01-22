@@ -30,14 +30,22 @@ def format_profile(player: Player) -> str:
 
         story_text = f"\n\n📖 Сюжет: Глава {current_chapter.chapter_id}{boss_status}\n{current_chapter.title}"
 
+    # Заклинания
+    spells_text = ""
+    if player.spells:
+        spells_list = ", ".join(player.spells)
+        spells_text = f"\n📚 Заклинания: {spells_list}"
+
     text = (
         f"👤 Уровень: {player.level}\n"
         f"❤️ HP: {player.hp}/{player.max_hp}\n"
+        f"⚡ Мана: {player.mana}/{player.max_mana}\n"
         f"⚔️ Сила: {player.power}\n"
         f"💰 Золото: {player.gold}\n"
         f"🗡️ Оружие: {weapon}\n"
         f"🛡️ Броня: {armor}\n"
         f"🎒 Инвентарь: {inv}"
+        f"{spells_text}"
         f"{achievements_text}"
         f"{story_text}"
     )

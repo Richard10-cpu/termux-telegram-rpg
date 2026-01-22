@@ -10,6 +10,7 @@ class ExperienceConstants:
     LEVEL_EXP_MULTIPLIER = 1  # множитель (linear: level * 60)
     HP_PER_LEVEL = 25
     POWER_PER_LEVEL = 5
+    MANA_PER_LEVEL = 10
 
 
 def exp_for_level(level: int) -> int:
@@ -32,12 +33,14 @@ def check_level_up(player: Player) -> tuple[bool, str | None]:
         player.level += 1
         player.max_hp += ExperienceConstants.HP_PER_LEVEL
         player.hp = player.max_hp  # Полное лечение при повышении уровня
+        player.max_mana += ExperienceConstants.MANA_PER_LEVEL
+        player.mana = player.max_mana  # Полное восстановление маны
         player.power += ExperienceConstants.POWER_PER_LEVEL
 
         msg = (
             f"🆙 УРОВЕНЬ ПОВЫШЕН! "
             f"Теперь вы {player.level} уровня! "
-            f"Сила и HP выросли."
+            f"Сила, HP и мана выросли."
         )
 
         # Проверяем, открылась ли новая глава

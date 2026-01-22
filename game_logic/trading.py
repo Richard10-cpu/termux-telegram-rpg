@@ -21,11 +21,22 @@ def can_purchase_item(player: Player, item_key: str) -> tuple[bool, str]:
     if not shop_item:
         return False, "❌ Предмет не найден в магазине!"
 
-    if player.gold < shop_item.item.cost:
+    item = shop_item.item
+
+    # Проверка уровня для заклинаний
+    if item.is_spell and player.level < item.required_level:
+        return False, f"❌ Требуется {item.required_level} уровень! У вас {player.level}."
+
+    if player.gold < item.cost:
         return False, "❌ Недостаточно золота!"
 
-    if not shop_item.can_purchase(player.inventory):
-        return False, f"❌ У вас уже есть {shop_item.item.name}!"
+    # Для заклинаний проверяем список изученных
+    if item.is_spell:
+        if item.name in player.spells:
+            return False, f"❌ Вы уже изучили {item.name}!"
+    else:
+        if not shop_item.can_purchase(player.inventory):
+            return False, f"❌ У вас уже есть {item.name}!"
 
     return True, ""
 
@@ -46,20 +57,28 @@ def purchase_item(player: Player, item_key: str) -> tuple[bool, str]:
     # Списываем золото
     player.gold -= item.cost
 
-    # Применяем бонусы
-    player.power += item.power_bonus
-    player.max_hp += item.max_hp_bonus
-
-    # Добавляем в инвентарь
-    player.inventory.append(item.name)
-
-    # Формируем сообщение
-    if item.item_type == ItemType.WEAPON:
-        msg = f"🗡️ Вы купили {item.name}! Сила значительно выросла."
-    elif item.item_type == ItemType.ARMOR:
-        msg = f"🛡️ Вы купили {item.name}! Максимальный HP +{item.max_hp_bonus}."
+    # Заклинания изучаются, а не кладутся в инвентарь
+    if item.is_spell:
+        player.spells.append(item.name)
+        msg = f"📚 Вы изучили заклинание {item.name}!\n"
+        msg += f"💫 Урон: {item.spell_damage}, " if item.spell_damage > 0 else ""
+        msg += f"💚 Лечение: {item.spell_heal}, " if item.spell_heal > 0 else ""
+        msg += f"Стоимость: {item.mana_cost} маны"
     else:
-        msg = f"🎒 Вы купили {item.name}!"
+        # Применяем бонусы
+        player.power += item.power_bonus
+        player.max_hp += item.max_hp_bonus
+
+        # Добавляем в инвентарь
+        player.inventory.append(item.name)
+
+        # Формируем сообщение
+        if item.item_type == ItemType.WEAPON:
+            msg = f"🗡️ Вы купили {item.name}! Сила значительно выросла."
+        elif item.item_type == ItemType.ARMOR:
+            msg = f"🛡️ Вы купили {item.name}! Максимальный HP +{item.max_hp_bonus}."
+        else:
+            msg = f"🎒 Вы купили {item.name}!"
 
     return True, msg
 
