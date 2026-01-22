@@ -7,6 +7,45 @@ if TYPE_CHECKING:
 
 
 @dataclass
+class BattleState:
+    """Состояние активного боя."""
+    monster_key: str
+    monster_name: str
+    monster_hp: int
+    monster_max_hp: int
+    monster_power: int
+    monster_exp: int
+    monster_gold_min: int
+    monster_gold_max: int
+    is_boss: bool = False
+    is_elite: bool = False
+    defending: bool = False  # Игрок защищается в этом ходу
+    turn: int = 1
+
+    def to_dict(self) -> dict:
+        """Преобразовать в словарь."""
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, data: dict) -> 'BattleState':
+        """Создать из словаря."""
+        return cls(
+            monster_key=data['monster_key'],
+            monster_name=data['monster_name'],
+            monster_hp=data['monster_hp'],
+            monster_max_hp=data['monster_max_hp'],
+            monster_power=data['monster_power'],
+            monster_exp=data['monster_exp'],
+            monster_gold_min=data['monster_gold_min'],
+            monster_gold_max=data['monster_gold_max'],
+            is_boss=data.get('is_boss', False),
+            is_elite=data.get('is_elite', False),
+            defending=data.get('defending', False),
+            turn=data.get('turn', 1)
+        )
+
+
+@dataclass
 class Equipment:
     """Экипировка игрока."""
     weapon: Optional[str] = None
@@ -68,6 +107,8 @@ class Player:
     achievements: List[str] = field(default_factory=list)
     total_kills: int = 0
     story_progress: Optional['StoryProgress'] = None
+    potions: Dict[str, int] = field(default_factory=lambda: {"health": 0, "mana": 0, "power": 0})
+    battle_state: Optional[BattleState] = None
 
     def to_dict(self) -> dict:
         """Преобразовать в словарь для сохранения в JSON."""
@@ -88,7 +129,9 @@ class Player:
             'quests': {k: v.to_dict() for k, v in self.quests.items()},
             'achievements': self.achievements,
             'total_kills': self.total_kills,
-            'story_progress': self.story_progress.to_dict() if self.story_progress else None
+            'story_progress': self.story_progress.to_dict() if self.story_progress else None,
+            'potions': self.potions,
+            'battle_state': self.battle_state.to_dict() if self.battle_state else None
         }
 
     @classmethod
@@ -109,6 +152,9 @@ class Player:
         story_progress_data = data.get('story_progress')
         story_progress = StoryProgress.from_dict(story_progress_data) if story_progress_data else None
 
+        battle_state_data = data.get('battle_state')
+        battle_state = BattleState.from_dict(battle_state_data) if battle_state_data else None
+
         return cls(
             user_id=data['user_id'],
             hp=data.get('hp', 100),
@@ -126,5 +172,7 @@ class Player:
             quests=quests,
             achievements=data.get('achievements', []),
             total_kills=data.get('total_kills', 0),
-            story_progress=story_progress
+            story_progress=story_progress,
+            potions=data.get('potions', {"health": 0, "mana": 0, "power": 0}),
+            battle_state=battle_state
         )

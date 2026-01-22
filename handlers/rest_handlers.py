@@ -8,17 +8,18 @@ router = Router()
 player_service = get_player_service()
 
 
-@router.message(F.text == "☕ Отдых (10💰)")
+@router.message(F.text == "☕ Отдых (15💰)")
 async def rest_and_heal(message: types.Message) -> None:
-    """Отдохнуть и восстановить здоровье."""
+    """Отдохнуть и восстановить здоровье и ману."""
     if not message.from_user:
         return
     player = player_service.get_or_create(message.from_user.id)
-    if player.gold >= 10:
-        player.gold -= 10
+    if player.gold >= 15:
+        player.gold -= 15
         player.hp = player.max_hp
+        player.mana = player.max_mana
         player_service.save_player(player)
-        await message.answer("☕ Вы отлично отдохнули и восстановили здоровье!")
+        await message.answer("☕ Вы отлично отдохнули! Здоровье и мана полностью восстановлены!")
     else:
         await message.answer("❌ Не хватает золота!")
 

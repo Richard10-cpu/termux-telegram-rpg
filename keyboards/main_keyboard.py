@@ -14,7 +14,7 @@ main_keyboard = ReplyKeyboardMarkup(
         ],
         [
             KeyboardButton(text="🛒 Магазин"),
-            KeyboardButton(text="☕ Отдых (10💰)")
+            KeyboardButton(text="☕ Отдых (15💰)")
         ],
         [
             KeyboardButton(text="🏆 Рейтинг")

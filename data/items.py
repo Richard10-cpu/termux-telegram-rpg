@@ -111,6 +111,40 @@ SHOP_ITEMS: dict[str, ShopItem] = {
             image_path="assets/images/spells/regeneration.png"
         ),
         unique=True
+    ),
+    # Зелья
+    "health_potion": ShopItem(
+        item=Item(
+            key="health_potion",
+            name="❤️ Зелье здоровья",
+            item_type=ItemType.CONSUMABLE,
+            cost=25,
+            description="Восстанавливает 50 HP",
+            image_path="assets/images/potions/health.png"
+        ),
+        unique=False
+    ),
+    "mana_potion": ShopItem(
+        item=Item(
+            key="mana_potion",
+            name="💙 Зелье маны",
+            item_type=ItemType.CONSUMABLE,
+            cost=30,
+            description="Восстанавливает 40 маны",
+            image_path="assets/images/potions/mana.png"
+        ),
+        unique=False
+    ),
+    "power_potion": ShopItem(
+        item=Item(
+            key="power_potion",
+            name="💪 Зелье силы",
+            item_type=ItemType.CONSUMABLE,
+            cost=50,
+            description="Увеличивает урон на 50% на 3 хода",
+            image_path="assets/images/potions/power.png"
+        ),
+        unique=False
     )
 }
 

@@ -1,7 +1,7 @@
 """Логика боя."""
 import random
 from dataclasses import dataclass
-from models import Player, Monster
+from models import Player, Monster, BattleState
 from data import MONSTER_TEMPLATES, LOCATIONS
 from data.monsters import BOSS_NAME_TO_KEY
 
@@ -116,3 +116,50 @@ def create_boss_monster(boss_name: str) -> Monster | None:
 
     template = MONSTER_TEMPLATES[boss_key]
     return Monster.from_template(template)
+
+
+# Новые функции для пошагового боя
+
+def create_battle_state(monster: Monster, is_boss: bool = False, is_elite: bool = False) -> BattleState:
+    """Создать состояние боя."""
+    return BattleState(
+        monster_key=monster.key,
+        monster_name=monster.name,
+        monster_hp=monster.hp,
+        monster_max_hp=monster.max_hp,
+        monster_power=monster.power,
+        monster_exp=monster.exp,
+        monster_gold_min=monster.gold_range[0],
+        monster_gold_max=monster.gold_range[1],
+        is_boss=is_boss,
+        is_elite=is_elite
+    )
+
+
+def player_attack(player: Player, state: BattleState) -> tuple[int, bool]:
+    """Атака игрока. Возвращает (урон, крит?)."""
+    crit = random.random() < 0.15  # 15% шанс крита
+    damage = calculate_damage(player.power)
+    if crit:
+        damage = int(damage * 1.5)
+    return damage, crit
+
+
+def monster_attack(player: Player, state: BattleState) -> tuple[int, bool]:
+    """Атака монстра. Возвращает (урон, промах игрока?)."""
+    dodge = random.random() < 0.10  # 10% шанс уклонения
+    if dodge:
+        return 0, True
+
+    damage = calculate_damage(state.monster_power)
+
+    # Если игрок защищается - урон снижается на 50%
+    if state.defending:
+        damage = damage // 2
+
+    return damage, False
+
+
+def flee_battle(player: Player) -> bool:
+    """Попытка сбежать. Возвращает True если успешно."""
+    return random.random() < 0.60  # 60% шанс побега

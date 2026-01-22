@@ -9,6 +9,7 @@ def get_shop_main_keyboard() -> InlineKeyboardMarkup:
     keyboard = [
         [InlineKeyboardButton(text="⚔️ Оружие и Броня", callback_data="shop_equipment")],
         [InlineKeyboardButton(text="📚 Заклинания", callback_data="shop_spells")],
+        [InlineKeyboardButton(text="🧪 Зелья", callback_data="shop_potions")],
         [InlineKeyboardButton(text="🔙 Закрыть", callback_data="shop_close")]
     ]
     return InlineKeyboardMarkup(inline_keyboard=keyboard)
@@ -57,6 +58,27 @@ def get_spells_keyboard(player: Player) -> InlineKeyboardMarkup:
 
             callback = f"buy_{key}" if (not learned and can_learn) else "shop_spells"
             keyboard.append([InlineKeyboardButton(text=button_text, callback_data=callback)])
+
+    keyboard.append([InlineKeyboardButton(text="🔙 Назад", callback_data="shop_main")])
+    return InlineKeyboardMarkup(inline_keyboard=keyboard)
+
+
+def get_potions_keyboard(player: Player) -> InlineKeyboardMarkup:
+    """Клавиатура зелий."""
+    keyboard = []
+
+    for key, shop_item in SHOP_ITEMS.items():
+        item = shop_item.item
+        if item.item_type == ItemType.CONSUMABLE:
+            # Показываем количество зелий у игрока
+            owned_count = player.potions.get(key, 0)
+            count_text = f" (x{owned_count})" if owned_count > 0 else ""
+
+            button_text = f"{item.name} - {item.cost}💰{count_text}"
+            keyboard.append([InlineKeyboardButton(
+                text=button_text,
+                callback_data=f"buy_{key}"
+            )])
 
     keyboard.append([InlineKeyboardButton(text="🔙 Назад", callback_data="shop_main")])
     return InlineKeyboardMarkup(inline_keyboard=keyboard)

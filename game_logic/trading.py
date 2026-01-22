@@ -34,6 +34,9 @@ def can_purchase_item(player: Player, item_key: str) -> tuple[bool, str]:
     if item.is_spell:
         if item.name in player.spells:
             return False, f"❌ Вы уже изучили {item.name}!"
+    # Расходуемые предметы (зелья) можно покупать всегда
+    elif item.item_type == ItemType.CONSUMABLE:
+        return True, ""
     else:
         if not shop_item.can_purchase(player.inventory):
             return False, f"❌ У вас уже есть {item.name}!"
@@ -64,6 +67,12 @@ def purchase_item(player: Player, item_key: str) -> tuple[bool, str]:
         msg += f"💫 Урон: {item.spell_damage}, " if item.spell_damage > 0 else ""
         msg += f"💚 Лечение: {item.spell_heal}, " if item.spell_heal > 0 else ""
         msg += f"Стоимость: {item.mana_cost} маны"
+    # Зелья добавляются в счётчик
+    elif item.item_type == ItemType.CONSUMABLE:
+        if item_key not in player.potions:
+            player.potions[item_key] = 0
+        player.potions[item_key] += 1
+        msg = f"🧪 Вы купили {item.name}! Теперь у вас: {player.potions[item_key]} шт."
     else:
         # Применяем бонусы
         player.power += item.power_bonus
