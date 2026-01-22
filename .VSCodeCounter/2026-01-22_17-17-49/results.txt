@@ -1,0 +1,74 @@
+Date : 2026-01-22 17:17:49
+Directory : /Users/axisrow/Projects/termux-telegram-rpg
+Total : 38 files,  1122 codes, 214 comments, 327 blanks, all 1663 lines
+
+Languages
++------------------+------------+------------+------------+------------+------------+
+| language         | files      | code       | comment    | blank      | total      |
++------------------+------------+------------+------------+------------+------------+
+| Python           |         35 |      1,103 |        211 |        319 |      1,633 |
+| JSON             |          1 |         10 |          0 |          1 |         11 |
+| Docker           |          1 |          7 |          3 |          6 |         16 |
+| pip requirements |          1 |          2 |          0 |          1 |          3 |
++------------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                    | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                       |         38 |      1,122 |        214 |        327 |      1,663 |
+| . (Files)                                                               |          4 |         47 |         15 |         24 |         86 |
+| .claude                                                                 |          1 |         10 |          0 |          1 |         11 |
+| data                                                                    |          4 |        120 |          5 |          9 |        134 |
+| game_logic                                                              |          6 |        318 |         88 |        109 |        515 |
+| handlers                                                                |          8 |        207 |         37 |         76 |        320 |
+| keyboards                                                               |          5 |         74 |          5 |         14 |         93 |
+| models                                                                  |          5 |        178 |         26 |         38 |        242 |
+| services                                                                |          3 |        113 |         30 |         34 |        177 |
+| utils                                                                   |          2 |         55 |          8 |         22 |         85 |
++-------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| filename                                                                | language         | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| /Users/axisrow/Projects/termux-telegram-rpg/.claude/settings.local.json | JSON             |         10 |          0 |          1 |         11 |
+| /Users/axisrow/Projects/termux-telegram-rpg/Dockerfile                  | Docker           |          7 |          3 |          6 |         16 |
+| /Users/axisrow/Projects/termux-telegram-rpg/bot.py                      | Python           |         31 |          8 |         12 |         51 |
+| /Users/axisrow/Projects/termux-telegram-rpg/config.py                   | Python           |          7 |          4 |          5 |         16 |
+| /Users/axisrow/Projects/termux-telegram-rpg/data/__init__.py            | Python           |          9 |          1 |          2 |         12 |
+| /Users/axisrow/Projects/termux-telegram-rpg/data/items.py               | Python           |         27 |          2 |          3 |         32 |
+| /Users/axisrow/Projects/termux-telegram-rpg/data/locations.py           | Python           |         31 |          1 |          2 |         34 |
+| /Users/axisrow/Projects/termux-telegram-rpg/data/monsters.py            | Python           |         53 |          1 |          2 |         56 |
+| /Users/axisrow/Projects/termux-telegram-rpg/game_logic/__init__.py      | Python           |         33 |          1 |          2 |         36 |
+| /Users/axisrow/Projects/termux-telegram-rpg/game_logic/achievements.py  | Python           |         63 |         17 |         19 |         99 |
+| /Users/axisrow/Projects/termux-telegram-rpg/game_logic/battle.py        | Python           |         78 |         10 |         22 |        110 |
+| /Users/axisrow/Projects/termux-telegram-rpg/game_logic/experience.py    | Python           |         26 |         14 |         12 |         52 |
+| /Users/axisrow/Projects/termux-telegram-rpg/game_logic/quests.py        | Python           |         60 |         20 |         29 |        109 |
+| /Users/axisrow/Projects/termux-telegram-rpg/game_logic/trading.py       | Python           |         58 |         26 |         25 |        109 |
+| /Users/axisrow/Projects/termux-telegram-rpg/handlers/__init__.py        | Python           |         16 |          1 |          2 |         19 |
+| /Users/axisrow/Projects/termux-telegram-rpg/handlers/battle_handlers.py | Python           |         42 |         12 |         16 |         70 |
+| /Users/axisrow/Projects/termux-telegram-rpg/handlers/commands.py        | Python           |         35 |          5 |         15 |         55 |
+| /Users/axisrow/Projects/termux-telegram-rpg/handlers/map_handlers.py    | Python           |         27 |          4 |         11 |         42 |
+| /Users/axisrow/Projects/termux-telegram-rpg/handlers/profile.py         | Python           |         10 |          2 |          5 |         17 |
+| /Users/axisrow/Projects/termux-telegram-rpg/handlers/quest_handlers.py  | Python           |         28 |          5 |          9 |         42 |
+| /Users/axisrow/Projects/termux-telegram-rpg/handlers/rest_handlers.py   | Python           |         23 |          3 |          7 |         33 |
+| /Users/axisrow/Projects/termux-telegram-rpg/handlers/shop_handlers.py   | Python           |         26 |          5 |         11 |         42 |
+| /Users/axisrow/Projects/termux-telegram-rpg/keyboards/__init__.py       | Python           |         10 |          1 |          2 |         13 |
+| /Users/axisrow/Projects/termux-telegram-rpg/keyboards/main_keyboard.py  | Python           |         21 |          1 |          3 |         25 |
+| /Users/axisrow/Projects/termux-telegram-rpg/keyboards/map_keyboard.py   | Python           |         17 |          1 |          3 |         21 |
+| /Users/axisrow/Projects/termux-telegram-rpg/keyboards/quest_keyboard.py | Python           |         13 |          1 |          3 |         17 |
+| /Users/axisrow/Projects/termux-telegram-rpg/keyboards/shop_keyboard.py  | Python           |         13 |          1 |          3 |         17 |
+| /Users/axisrow/Projects/termux-telegram-rpg/models/__init__.py          | Python           |         15 |          1 |          2 |         18 |
+| /Users/axisrow/Projects/termux-telegram-rpg/models/item.py              | Python           |         28 |          6 |          9 |         43 |
+| /Users/axisrow/Projects/termux-telegram-rpg/models/location.py          | Python           |         15 |          4 |          5 |         24 |
+| /Users/axisrow/Projects/termux-telegram-rpg/models/monster.py           | Python           |         34 |          5 |          7 |         46 |
+| /Users/axisrow/Projects/termux-telegram-rpg/models/player.py            | Python           |         86 |         10 |         15 |        111 |
+| /Users/axisrow/Projects/termux-telegram-rpg/requirements.txt            | pip requirements |          2 |          0 |          1 |          3 |
+| /Users/axisrow/Projects/termux-telegram-rpg/services/__init__.py        | Python           |          7 |          1 |          2 |         10 |
+| /Users/axisrow/Projects/termux-telegram-rpg/services/data_repository.py | Python           |         52 |         10 |         12 |         74 |
+| /Users/axisrow/Projects/termux-telegram-rpg/services/player_service.py  | Python           |         54 |         19 |         20 |         93 |
+| /Users/axisrow/Projects/termux-telegram-rpg/utils/__init__.py           | Python           |          7 |          1 |          2 |         10 |
+| /Users/axisrow/Projects/termux-telegram-rpg/utils/formatters.py         | Python           |         48 |          7 |         20 |         75 |
+| Total                                                                   |                  |      1,122 |        214 |        327 |      1,663 |
++-------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
