@@ -1,6 +1,6 @@
 """Тесты для моделей данных."""
 import pytest
-from models import Player, Equipment, BattleState, Monster, MonsterTemplate, Item, ItemType
+from models import Player, Equipment, BattleState, Monster, MonsterTemplate, Item, ItemType, StoryProgress, StoryChapter
 
 
 class TestPlayer:
@@ -192,3 +192,156 @@ class TestItem:
             cost=50
         )
         assert weapon.is_spell is False
+
+
+class TestStoryProgress:
+    """Тесты прогресса сюжета."""
+
+    def test_story_progress_default_values(self):
+        """Значения по умолчанию."""
+        progress = StoryProgress()
+        assert progress.current_chapter == 1
+        assert progress.completed_chapters == []
+        assert progress.boss_defeated == {}
+
+    def test_story_progress_with_values(self):
+        """Создание со значениями."""
+        progress = StoryProgress(
+            current_chapter=2,
+            completed_chapters=[1],
+            boss_defeated={"Босс": True}
+        )
+        assert progress.current_chapter == 2
+        assert 1 in progress.completed_chapters
+        assert progress.boss_defeated["Босс"] is True
+
+    def test_story_progress_to_dict(self):
+        """Сериализация."""
+        progress = StoryProgress(
+            current_chapter=3,
+            completed_chapters=[1, 2],
+            boss_defeated={"Босс1": True}
+        )
+        data = progress.to_dict()
+        assert data["current_chapter"] == 3
+        assert data["completed_chapters"] == [1, 2]
+        assert data["boss_defeated"] == {"Босс1": True}
+
+    def test_story_progress_from_dict(self):
+        """Десериализация."""
+        data = {
+            "current_chapter": 4,
+            "completed_chapters": [1, 2, 3],
+            "boss_defeated": {"Босс": True}
+        }
+        progress = StoryProgress.from_dict(data)
+        assert progress.current_chapter == 4
+        assert progress.completed_chapters == [1, 2, 3]
+
+    def test_story_progress_from_dict_defaults(self):
+        """Десериализация с дефолтными значениями."""
+        data = {"current_chapter": 1}
+        progress = StoryProgress.from_dict(data)
+        assert progress.current_chapter == 1
+        assert progress.completed_chapters == []
+        assert progress.boss_defeated == {}
+
+    def test_complete_chapter_new(self):
+        """Завершение новой главы."""
+        progress = StoryProgress(current_chapter=1)
+        progress.complete_chapter(1)
+        assert 1 in progress.completed_chapters
+        assert progress.current_chapter == 2
+
+    def test_complete_chapter_duplicate(self):
+        """Повторное завершение главы."""
+        progress = StoryProgress(
+            current_chapter=3,
+            completed_chapters=[1, 2]
+        )
+        progress.complete_chapter(1)  # Уже завершена
+        # Не должно быть дубликата
+        assert progress.completed_chapters.count(1) == 1
+
+    def test_is_chapter_completed_true(self):
+        """Глава завершена."""
+        progress = StoryProgress(
+            current_chapter=2,
+            completed_chapters=[1]
+        )
+        assert progress.is_chapter_completed(1) is True
+
+    def test_is_chapter_completed_false(self):
+        """Глава не завершена."""
+        progress = StoryProgress(current_chapter=1)
+        assert progress.is_chapter_completed(1) is False
+
+    def test_defeat_boss(self):
+        """Поражение босса."""
+        progress = StoryProgress()
+        progress.defeat_boss("Тёмный Маг")
+        assert progress.is_boss_defeated("Тёмный Маг") is True
+
+    def test_is_boss_defeated_true(self):
+        """Проверка поражения босса - побеждён."""
+        progress = StoryProgress(boss_defeated={"Босс": True})
+        assert progress.is_boss_defeated("Босс") is True
+
+    def test_is_boss_defeated_false(self):
+        """Проверка поражения босса - не побеждён."""
+        progress = StoryProgress()
+        assert progress.is_boss_defeated("Босс") is False
+
+
+class TestStoryChapter:
+    """Тесты глав сюжета."""
+
+    def test_storychapter_creation(self):
+        """Создание главы."""
+        chapter = StoryChapter(
+            chapter_id=1,
+            title="Первая глава",
+            description="Описание",
+            unlock_level=1
+        )
+        assert chapter.chapter_id == 1
+        assert chapter.title == "Первая глава"
+
+    def test_storychapter_optional_fields(self):
+        """Опциональные поля."""
+        chapter = StoryChapter(
+            chapter_id=2,
+            title="Вторая глава",
+            description="Описание",
+            unlock_level=5,
+            location_requirement="forest",
+            boss_name="Лесной страж",
+            reward_gold=100,
+            reward_exp=50,
+            reward_item="Меч лесника"
+        )
+        assert chapter.location_requirement == "forest"
+        assert chapter.boss_name == "Лесной страж"
+        assert chapter.reward_item == "Меч лесника"
+
+    def test_is_unlocked_true(self):
+        """Проверка разблокировки - разблокирована."""
+        chapter = StoryChapter(
+            chapter_id=1,
+            title="Глава",
+            description="Описание",
+            unlock_level=5
+        )
+        assert chapter.is_unlocked(5) is True
+        assert chapter.is_unlocked(10) is True
+
+    def test_is_unlocked_false(self):
+        """Проверка разблокировки - заблокирована."""
+        chapter = StoryChapter(
+            chapter_id=1,
+            title="Глава",
+            description="Описание",
+            unlock_level=5
+        )
+        assert chapter.is_unlocked(1) is False
+        assert chapter.is_unlocked(4) is False

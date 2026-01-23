@@ -5,6 +5,7 @@ from game_logic.trading import (
     get_item_type, can_purchase_item, purchase_item,
     equip_item, get_item_by_name
 )
+from game_logic.achievements import check_and_award, get_achievement_name, format_achievements
 from models import Player, ItemType
 
 
@@ -204,3 +205,90 @@ class TestEquipment:
 
         item = get_item_by_name("Несуществующий предмет")
         assert item is None
+
+
+class TestAchievements:
+    """Тесты системы достижений."""
+
+    def test_check_and_award_first_achievement(self, test_player):
+        """Получение первого достижения."""
+        test_player.total_kills = 0
+        test_player.achievements = []
+
+        message, new_achievements = check_and_award(test_player, "Сообщение")
+
+        # Должно выдать первое достижение
+        test_player.total_kills = 1
+        message, new_achievements = check_and_award(test_player, "Сообщение")
+
+        assert "first_blood" in test_player.achievements
+        assert len(new_achievements) > 0
+
+    def test_check_and_award_multiple_achievements(self, test_player):
+        """Получение нескольких достижений."""
+        test_player.total_kills = 0
+        test_player.gold = 0
+        test_player.level = 0
+        test_player.achievements = []
+
+        # Выполняем условия для нескольких достижений
+        test_player.total_kills = 10
+        test_player.gold = 100
+        test_player.level = 5
+
+        message, new_achievements = check_and_award(test_player, "Бой завершён")
+
+        # Проверяем что получили несколько достижений
+        assert len(new_achievements) >= 2
+
+    def test_check_and_award_no_new(self, test_player):
+        """Без новых достижений."""
+        test_player.total_kills = 0
+        test_player.achievements = []
+
+        message, new_achievements = check_and_award(test_player, "Бой")
+
+        assert len(new_achievements) == 0
+        assert message == "Бой"
+
+    def test_check_and_award_no_duplicates(self, test_player):
+        """Повторная выдача достижения."""
+        test_player.total_kills = 5
+        test_player.achievements = ["first_blood"]
+
+        message, new_achievements = check_and_award(test_player, "Бой")
+
+        # Не должно выдать первое достижение снова
+        assert new_achievements.count("Первая кровь") == 0
+
+    def test_get_achievement_name_valid(self):
+        """Получение названия достижения."""
+        from game_logic.achievements import get_achievement_name, Achievement
+        name = get_achievement_name("first_blood")
+        assert name == "Первая кровь"
+
+    def test_get_achievement_name_invalid(self):
+        """Название несуществующего достижения."""
+        from game_logic.achievements import get_achievement_name
+        name = get_achievement_name("invalid_achievement")
+        assert name == "invalid_achievement"
+
+    def test_format_achievements_empty(self):
+        """Форматирование пустого списка."""
+        from game_logic.achievements import format_achievements
+        text = format_achievements([])
+        assert text == ""
+
+    def test_format_achievements_single(self):
+        """Форматирование одного достижения."""
+        from game_logic.achievements import format_achievements
+        text = format_achievements(["first_blood"])
+        assert "Достижения" in text
+        assert "Первая кровь" in text
+
+    def test_format_achievements_multiple(self):
+        """Форматирование нескольких достижений."""
+        from game_logic.achievements import format_achievements
+        text = format_achievements(["first_blood", "rich"])
+        assert "Первая кровь" in text
+        assert "Богач" in text

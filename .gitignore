@@ -51,6 +51,7 @@ env/
 # Тесты и покрытие
 .pytest_cache/
 .coverage
+coverage.json
 htmlcov/
 .tox/
 
