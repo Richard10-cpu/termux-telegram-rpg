@@ -1,5 +1,6 @@
 """Обработчики боев с пошаговой системой."""
 import random
+from pathlib import Path
 from aiogram import Router, F, types
 from aiogram.types import FSInputFile, CallbackQuery
 from services import get_player_service
@@ -16,7 +17,7 @@ from game_logic import (
     use_potion
 )
 from game_logic.battle import create_boss_monster
-from game_logic.story import get_story_progress, get_current_chapter, complete_chapter
+from game_logic.story import get_story_progress, get_current_chapter, complete_chapter, check_chapter_requirements
 from data import LOCATIONS
 from keyboards.battle_keyboard import get_battle_keyboard, get_spells_battle_keyboard, get_potions_battle_keyboard
 
@@ -49,6 +50,14 @@ def format_battle_status(player, state) -> str:
     return text
 
 
+async def update_battle_message(message: types.Message, text: str, reply_markup=None) -> None:
+    """Обновить сообщение боя независимо от типа (текст или фото)."""
+    if message.photo:
+        await message.edit_caption(caption=text, reply_markup=reply_markup)
+    else:
+        await message.edit_text(text, reply_markup=reply_markup)
+
+
 @router.message(F.text == "⚔️ В бой!")
 async def start_battle(message: types.Message) -> None:
     """Начать пошаговый бой."""
@@ -71,13 +80,18 @@ async def start_battle(message: types.Message) -> None:
     current_chapter = get_current_chapter(player)
     is_boss_fight = False
     monster = None
+    boss_blocked_msg = None
 
     if current_chapter and current_chapter.boss_name:
         if not progress.is_boss_defeated(current_chapter.boss_name):
-            # Создаём босса для битвы
-            monster = create_boss_monster(current_chapter.boss_name)
-            if monster:
-                is_boss_fight = True
+            can_start, error_msg = check_chapter_requirements(player, current_chapter)
+            if can_start:
+                # Создаём босса для битвы
+                monster = create_boss_monster(current_chapter.boss_name)
+                if monster:
+                    is_boss_fight = True
+            else:
+                boss_blocked_msg = error_msg
 
     # Если не сюжетная битва, выбираем обычного монстра
     if not is_boss_fight:
@@ -85,7 +99,9 @@ async def start_battle(message: types.Message) -> None:
         monster = select_monster_for_location(location, player.level)
         if monster is None:
             loc_data = LOCATIONS.get(location)
-            if loc_data and loc_data.is_peaceful:
+            if boss_blocked_msg:
+                await message.answer(boss_blocked_msg)
+            elif loc_data and loc_data.is_peaceful:
                 await message.answer(f"🏘️ В {loc_data.name} нет врагов! Отправляйтесь в приключение.")
             else:
                 await message.answer("⚠️ В этой локации нет подходящих монстров для вашего уровня. Попробуйте другое место!")
@@ -101,8 +117,9 @@ async def start_battle(message: types.Message) -> None:
     # Показываем статус боя
     text = format_battle_status(player, player.battle_state)
 
-    if monster.image_path:
-        photo = FSInputFile(monster.image_path)
+    image_path = Path(monster.image_path) if monster.image_path else None
+    if image_path and image_path.exists():
+        photo = FSInputFile(str(image_path))
         await message.answer_photo(
             photo,
             caption=text,
@@ -170,10 +187,7 @@ async def callback_battle_attack(callback: CallbackQuery) -> None:
     text = log + "\n\n" + format_battle_status(player, state)
     has_potions = any(count > 0 for count in player.potions.values())
 
-    await callback.message.edit_caption(
-        caption=text,
-        reply_markup=get_battle_keyboard(player, has_potions)
-    )
+    await update_battle_message(callback.message, text, get_battle_keyboard(player, has_potions))
     await callback.answer()
 
 
@@ -218,10 +232,7 @@ async def callback_battle_defend(callback: CallbackQuery) -> None:
     text = log + "\n\n" + format_battle_status(player, state)
     has_potions = any(count > 0 for count in player.potions.values())
 
-    await callback.message.edit_caption(
-        caption=text,
-        reply_markup=get_battle_keyboard(player, has_potions)
-    )
+    await update_battle_message(callback.message, text, get_battle_keyboard(player, has_potions))
     await callback.answer()
 
 
@@ -292,10 +303,7 @@ async def callback_cast_spell(callback: CallbackQuery) -> None:
     text = log + "\n\n" + format_battle_status(player, state)
     has_potions = any(count > 0 for count in player.potions.values())
 
-    await callback.message.edit_caption(
-        caption=text,
-        reply_markup=get_battle_keyboard(player, has_potions)
-    )
+    await update_battle_message(callback.message, text, get_battle_keyboard(player, has_potions))
     await callback.answer()
 
 
@@ -361,10 +369,7 @@ async def callback_use_potion(callback: CallbackQuery) -> None:
     text = log + "\n\n" + format_battle_status(player, state)
     has_potions = any(count > 0 for count in player.potions.values())
 
-    await callback.message.edit_caption(
-        caption=text,
-        reply_markup=get_battle_keyboard(player, has_potions)
-    )
+    await update_battle_message(callback.message, text, get_battle_keyboard(player, has_potions))
     await callback.answer()
 
 
@@ -409,9 +414,10 @@ async def callback_battle_flee(callback: CallbackQuery) -> None:
         player.battle_state = None
         player_service.save_player(player)
 
-        await callback.message.edit_caption(
-            caption=f"🏃 Вам удалось сбежать от {state.monster_name}!",
-            reply_markup=None
+        await update_battle_message(
+            callback.message,
+            f"🏃 Вам удалось сбежать от {state.monster_name}!",
+            None
         )
         await callback.answer()
     else:
@@ -437,10 +443,7 @@ async def callback_battle_flee(callback: CallbackQuery) -> None:
         text = log + "\n\n" + format_battle_status(player, state)
         has_potions = any(count > 0 for count in player.potions.values())
 
-        await callback.message.edit_caption(
-            caption=text,
-            reply_markup=get_battle_keyboard(player, has_potions)
-        )
+        await update_battle_message(callback.message, text, get_battle_keyboard(player, has_potions))
         await callback.answer()
 
 
@@ -490,7 +493,7 @@ async def handle_victory(callback: CallbackQuery, player, state, log: str) -> No
 
     player_service.save_player(player)
 
-    await callback.message.edit_caption(caption=msg, reply_markup=None)
+    await update_battle_message(callback.message, msg, None)
     await callback.answer("Победа!")
 
 
@@ -508,5 +511,5 @@ async def handle_defeat(callback: CallbackQuery, player, state, log: str) -> Non
     msg += f"💸 Потеряно золота: {gold_lost}\n"
     msg += "💡 Отдохните и попробуйте снова!"
 
-    await callback.message.edit_caption(caption=msg, reply_markup=None)
+    await update_battle_message(callback.message, msg, None)
     await callback.answer("Поражение...")
