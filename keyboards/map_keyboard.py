@@ -12,9 +12,6 @@ map_keyboard = ReplyKeyboardMarkup(
             KeyboardButton(text="🕳️ Пещера"),
             KeyboardButton(text="⛰️ Гора")
         ],
-        [
-            KeyboardButton(text="⬅️ Назад")
-        ]
     ],
     resize_keyboard=True
 )

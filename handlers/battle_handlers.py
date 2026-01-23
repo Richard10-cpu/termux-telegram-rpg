@@ -96,7 +96,7 @@ async def start_battle(message: types.Message) -> None:
     # Если не сюжетная битва, выбираем обычного монстра
     if not is_boss_fight:
         location = player.location
-        monster = select_monster_for_location(location, player.level)
+        monster = select_monster_for_location(location, player.level, allow_any_level=True)
         if monster is None:
             loc_data = LOCATIONS.get(location)
             if boss_blocked_msg:
@@ -484,7 +484,7 @@ async def handle_victory(callback: CallbackQuery, player, state, log: str) -> No
         msg += quest_msg
 
     # Проверка уровня
-    leveled, level_msg = add_experience(player, 0)
+    leveled, level_msg = add_experience(player, exp_earned)
     if leveled and level_msg:
         msg += f"\n\n{level_msg}"
 

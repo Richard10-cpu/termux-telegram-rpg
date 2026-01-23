@@ -6,6 +6,7 @@ from keyboards.shop_keyboard import get_shop_main_keyboard, get_equipment_keyboa
 from keyboards import main_keyboard
 from game_logic import purchase_item
 from data import SHOP_ITEMS
+from models import ItemType
 
 router = Router()
 
@@ -132,7 +133,6 @@ async def callback_buy_item(callback: CallbackQuery) -> None:
         player_service.save_player(player)
 
         # Обновляем клавиатуру
-        from models import ItemType
         if shop_item.item.is_spell:
             keyboard = get_spells_keyboard(player)
             await callback.message.edit_reply_markup(reply_markup=keyboard)
@@ -160,4 +160,4 @@ async def callback_shop_close(callback: CallbackQuery) -> None:
 @router.message(F.text == "⬅️ Назад")
 async def go_back(message: types.Message) -> None:
     """Вернуться в главное меню."""
-    await message.answer("Вы вернулись на главную.", reply_markup=main_keyboard)
+    await message.answer("🧭 Куда дальше?", reply_markup=main_keyboard)

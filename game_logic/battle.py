@@ -36,7 +36,11 @@ def calculate_damage(power: int) -> int:
     return random.randint(power // 2, power)
 
 
-def select_monster_for_location(location_key: str, player_level: int) -> Monster | None:
+def select_monster_for_location(
+    location_key: str,
+    player_level: int,
+    allow_any_level: bool = False,
+) -> Monster | None:
     """Выбрать монстра для локации с учётом уровня игрока."""
     location = LOCATIONS.get(location_key)
     if not location or not location.has_enemies:
@@ -48,6 +52,13 @@ def select_monster_for_location(location_key: str, player_level: int) -> Monster
         for key in location.enemies
         if key in MONSTER_TEMPLATES and MONSTER_TEMPLATES[key].is_available_for_level(player_level)
     ]
+
+    if not available_monsters and allow_any_level:
+        available_monsters = [
+            MONSTER_TEMPLATES[key]
+            for key in location.enemies
+            if key in MONSTER_TEMPLATES
+        ]
 
     if not available_monsters:
         return None

@@ -1,3 +1,4 @@
+# pyright: reportUnknownMemberType=false
 """Termux RPG Bot - Модульная версия.
 
 Главный точка входа бота.
@@ -54,7 +55,7 @@ async def main() -> None:
     print("📡 Начинаем polling...")
 
     try:
-        await dp.start_polling(bot)
+        await dp.start_polling(bot)  # type: ignore[reportUnknownMemberType]
     except Exception as e:
         print(f"❌ Ошибка polling: {e}")
         import traceback

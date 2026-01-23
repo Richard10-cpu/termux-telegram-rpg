@@ -2,7 +2,7 @@
 from aiogram import Router, F, types
 from aiogram.types import FSInputFile
 from services import get_player_service
-from keyboards import map_keyboard
+from keyboards import map_keyboard, main_keyboard
 from utils import format_location_info
 from data import LOCATIONS
 
@@ -26,7 +26,7 @@ async def show_map(message: types.Message) -> None:
     if not message.from_user:
         return
     player = player_service.get_or_create(message.from_user.id)
-    text = format_location_info(str(player.location))
+    text = format_location_info(player.location)
     
     loc_data = LOCATIONS.get(str(player.location))
     if loc_data and loc_data.image_path:
@@ -52,6 +52,6 @@ async def travel_to_location(message: types.Message) -> None:
     
     if loc_data.image_path:
         photo = FSInputFile(loc_data.image_path)
-        await message.answer_photo(photo, caption=text)
+        await message.answer_photo(photo, caption=text, reply_markup=main_keyboard)
     else:
-        await message.answer(text)
+        await message.answer(text, reply_markup=main_keyboard)
