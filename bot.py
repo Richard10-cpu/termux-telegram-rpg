@@ -5,7 +5,6 @@
 import asyncio
 import logging
 import os
-from typing import Any, Awaitable, Protocol, cast
 from dotenv import load_dotenv
 
 from aiogram import Bot, Dispatcher
@@ -43,10 +42,6 @@ dp.include_router(quest_router)
 dp.include_router(rest_router)
 dp.include_router(story_router)
 
-class _PollingDispatcher(Protocol):
-    def start_polling(self, *bots: Bot, **kwargs: Any) -> Awaitable[None]:
-        ...
-
 
 async def main() -> None:
     """Главная функция запуска бота."""
@@ -59,8 +54,7 @@ async def main() -> None:
     print("📡 Начинаем polling...")
 
     try:
-        polling_dp = cast(_PollingDispatcher, dp)
-        await polling_dp.start_polling(bot)
+        await dp.start_polling(bot)
     except Exception as e:
         print(f"❌ Ошибка polling: {e}")
         import traceback
