@@ -23,6 +23,10 @@ class Item:
     power_bonus: int = 0
     hp_bonus: int = 0
     max_hp_bonus: int = 0
+    max_mana_bonus: int = 0  # Бонус к максимальной мане
+    mana_regen_bonus: int = 0  # Бонус к регенерации маны
+    defense_bonus: int = 0  # Бонус к защите
+    lifesteal: float = 0.0  # Вампиризм (0.0 - 1.0)
     mana_cost: int = 0  # Стоимость маны для заклинаний
     spell_damage: int = 0  # Урон заклинания
     spell_heal: int = 0  # Лечение заклинания
