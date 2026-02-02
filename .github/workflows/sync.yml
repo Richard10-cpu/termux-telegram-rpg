@@ -20,7 +20,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Add upstream remote
-        run: git remote add upstream https://github.com/Jesewe/termux-telegram-rpg.git
+        run: git remote add upstream https://github.com/Richard10-cpu/termux-telegram-rpg.git
 
       - name: Fetch upstream
         run: git fetch upstream main
