@@ -237,4 +237,4 @@ async def test_go_back(mock_message):
         # Проверяем, что отправлено сообщение
         mock_message.answer.assert_called_once()
         call_args = mock_message.answer.call_args[0][0]
-        assert "главн" in call_args.lower()
+        assert "куда" in call_args.lower()

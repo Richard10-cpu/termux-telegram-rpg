@@ -1,8 +1,10 @@
 name: Sync Fork
 
 on:
+  repository_dispatch:
+    types: [upstream-push]
   schedule:
-    # Каждый день в 6:00 UTC
+    # Fallback: каждый день в 6:00 UTC
     - cron: '0 6 * * *'
   workflow_dispatch: # Ручной запуск при необходимости
 
@@ -24,3 +26,9 @@ jobs:
           git fetch upstream
           git merge upstream/main --no-edit || true
           git push origin main
+
+      - name: Log trigger info
+        if: github.event_name == 'repository_dispatch'
+        run: |
+          echo "Triggered by upstream commit: ${{ github.event.client_payload.commit }}"
+          echo "Message: ${{ github.event.client_payload.message }}"
