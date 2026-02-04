@@ -33,7 +33,11 @@ def check_chapter_requirements(player: Player, chapter: StoryChapter) -> tuple[b
             "village": "🏘️ Деревню",
             "forest": "🌲 Тёмный лес",
             "cave": "🕳️ Пещеру",
-            "mountain": "⛰️ Гору"
+            "mountain": "⛰️ Гору",
+            "abyss": "🌊 Морскую бездну",
+            "ruins": "🏛️ Руины империи",
+            "hell": "🔥 Преисподнюю",
+            "void": "⚡ Пустоту"
         }
         required_location = location_names.get(chapter.location_requirement, chapter.location_requirement)
         return False, f"❌ Вы должны находиться в локации: {required_location}"
@@ -114,12 +118,13 @@ def complete_chapter(player: Player, chapter_id: int) -> tuple[bool, str]:
     reward_text = ", ".join(rewards)
 
     # Проверка окончания игры
-    if chapter_id == 4:
+    if chapter_id == 8:
         msg = (
             f"🎉 ПОЗДРАВЛЯЕМ! Вы завершили главу '{chapter.title}'!\n\n"
             f"🏆 ВЫ ПРОШЛИ ВСЮ ИГРУ!\n"
             f"🎁 Награды: {reward_text}\n\n"
-            f"✨ Вы стали легендой! Мир спасён от тьмы!"
+            f"✨ Вы стали легендой вселенной! Первозданный Хаос побеждён!\n"
+            f"⚡ Реальность восстановлена, и ваше имя навечно вписано в историю!"
         )
     else:
         next_chapter = get_chapter(chapter_id + 1)
