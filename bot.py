@@ -17,7 +17,8 @@ from handlers import (
     map_router,
     quest_router,
     rest_router,
-    story_router
+    story_router,
+    features_router
 )
 
 # Загрузка переменных окружения
@@ -41,6 +42,7 @@ dp.include_router(map_router)
 dp.include_router(quest_router)
 dp.include_router(rest_router)
 dp.include_router(story_router)
+dp.include_router(features_router)  # Новые фичи: достижения, питомцы, казино, крафт
 
 
 async def main() -> None:
