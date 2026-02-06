@@ -1,0 +1,35 @@
+name: Notify Fork Sync App
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send signed webhook to fork sync app
+        env:
+          WEBHOOK_URL: https://github-fork-sync-app.vercel.app/api/webhook
+          WEBHOOK_SECRET: ${{ secrets.FORK_SYNC_WEBHOOK_SECRET }}
+          REF: ${{ github.ref }}
+          AFTER: ${{ github.sha }}
+          MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          payload=$(jq -nc \
+            --arg ref "$REF" \
+            --arg after "$AFTER" \
+            --arg message "$MESSAGE" \
+            '{ref:$ref, after:$after, head_commit:{message:$message}}')
+
+          signature="sha256=$(printf '%s' "$payload" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" | awk '{print $2}')"
+
+          curl --fail --show-error --silent \
+            -X POST "$WEBHOOK_URL" \
+            -H "content-type: application/json" \
+            -H "x-github-event: push" \
+            -H "x-hub-signature-256: $signature" \
+            --data "$payload"
