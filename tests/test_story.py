@@ -284,6 +284,6 @@ class TestFormatStoryOverview:
 
         text = format_story_overview(test_player)
 
-        assert "1/4" in text  # 1 глава из 4
+        assert "1/8" in text  # 1 глава из 8
         assert "Глава 1" in text
         assert "Глава 2" in text

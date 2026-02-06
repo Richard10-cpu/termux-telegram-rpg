@@ -61,9 +61,9 @@ class TestStoryChapters:
     def test_get_all_chapters(self):
         """Получение всех глав."""
         chapters = get_all_chapters()
-        assert len(chapters) == 4  # 4 главы в игре
+        assert len(chapters) == 8  # 8 глав в игре
         assert chapters[0].chapter_id == 1
-        assert chapters[-1].chapter_id == 4
+        assert chapters[-1].chapter_id == 8
 
     def test_get_chapter_by_id(self):
         """Получение главы по ID."""
