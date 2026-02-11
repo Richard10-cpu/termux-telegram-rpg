@@ -12,6 +12,14 @@ map_keyboard = ReplyKeyboardMarkup(
             KeyboardButton(text="🕳️ Пещера"),
             KeyboardButton(text="⛰️ Гора")
         ],
+        [
+            KeyboardButton(text="🌊 Морская бездна"),
+            KeyboardButton(text="🏛️ Руины империи")
+        ],
+        [
+            KeyboardButton(text="🔥 Преисподняя"),
+            KeyboardButton(text="⚡ Пустота")
+        ],
     ],
     resize_keyboard=True
 )
