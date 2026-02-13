@@ -1,15 +1,20 @@
 """Обработчики команд."""
 from aiogram import Router, types
 from aiogram.filters import Command
+from aiogram.types import WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
 from services import get_player_service
 from keyboards import main_keyboard
 from game_logic import equip_item
 from game_logic.story import get_current_chapter
 from utils import format_top_players
+import os
 
 router = Router()
 
 player_service = get_player_service()
+
+# URL веб-приложения
+WEBAPP_URL = os.getenv("WEBAPP_URL", "https://your-domain.com")  # Замените на ваш домен
 
 
 @router.message(Command("start"))
@@ -68,3 +73,63 @@ async def cmd_top(message: types.Message) -> None:
 
     text = format_top_players(top_players)
     await message.answer(text)
+
+
+@router.message(Command("webapp"))
+async def cmd_webapp(message: types.Message) -> None:
+    """Команда /webapp - открыть веб-приложение."""
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text="🎮 Открыть Mini App",
+            web_app=WebAppInfo(url=WEBAPP_URL)
+        )]
+    ])
+
+    await message.answer(
+        "🌟 <b>Termux RPG Mini App</b>\n\n"
+        "Играйте в улучшенной версии с красивым интерфейсом!\n\n"
+        "✨ Что нового:\n"
+        "• 🎨 Современный дизайн\n"
+        "• ⚔️ Визуализация боёв\n"
+        "• 🗺️ Интерактивная карта\n"
+        "• 📊 Подробная статистика\n"
+        "• 🎒 Удобный инвентарь\n\n"
+        "Нажмите кнопку ниже чтобы открыть!",
+        reply_markup=keyboard,
+        parse_mode="HTML"
+    )
+
+
+@router.message(Command("help"))
+async def cmd_help(message: types.Message) -> None:
+    """Команда /help - помощь."""
+    help_text = """
+🎮 <b>TERMUX RPG - ПОМОЩЬ</b>
+
+📱 <b>Основные команды:</b>
+/start - Начать игру
+/webapp - Открыть Mini App 🌟
+/profile - Ваш профиль
+/inventory - Инвентарь
+/map - Карта мира
+/fight - Сразиться с врагом
+/shop - Магазин
+/equip <предмет> - Экипировать
+/top - Рейтинг игроков
+
+🎯 <b>Дополнительные команды:</b>
+/achievements - Достижения
+/pets - Питомцы
+/casino - Казино
+/craft - Крафт
+/fishing - Рыбалка
+/arena - Арена
+
+📖 <b>Сюжет:</b>
+/story - Продолжить историю
+/quests - Активные квесты
+
+💡 <b>Совет:</b>
+Используйте /webapp для лучшего игрового опыта!
+"""
+    await message.answer(help_text, parse_mode="HTML")

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Termux RPG</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <!-- Главный экран -->
+    <div id="app" class="app">
+        <!-- Навигация -->
+        <nav class="navbar">
+            <button class="nav-btn" data-view="profile">
+                <span class="emoji">👤</span>
+                <span class="label">Профиль</span>
+            </button>
+            <button class="nav-btn" data-view="map">
+                <span class="emoji">🗺️</span>
+                <span class="label">Карта</span>
+            </button>
+            <button class="nav-btn" data-view="battle">
+                <span class="emoji">⚔️</span>
+                <span class="label">Бой</span>
+            </button>
+            <button class="nav-btn" data-view="inventory">
+                <span class="emoji">🎒</span>
+                <span class="label">Инвентарь</span>
+            </button>
+            <button class="nav-btn" data-view="shop">
+                <span class="emoji">🏪</span>
+                <span class="label">Магазин</span>
+            </button>
+        </nav>
+
+        <!-- Контент -->
+        <main class="content">
+            <!-- Профиль -->
+            <section id="profile-view" class="view active">
+                <div class="profile-header">
+                    <div class="avatar">👤</div>
+                    <h1 id="player-name">Герой</h1>
+                    <div class="level">Уровень <span id="player-level">1</span></div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card hp">
+                        <div class="stat-icon">❤️</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Здоровье</div>
+                            <div class="stat-bar">
+                                <div id="hp-bar" class="stat-bar-fill" style="width: 100%"></div>
+                            </div>
+                            <div class="stat-value"><span id="player-hp">100</span>/<span id="player-max-hp">100</span></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card mana">
+                        <div class="stat-icon">💙</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Мана</div>
+                            <div class="stat-bar">
+                                <div id="mana-bar" class="stat-bar-fill" style="width: 100%"></div>
+                            </div>
+                            <div class="stat-value"><span id="player-mana">50</span>/<span id="player-max-mana">50</span></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card power">
+                        <div class="stat-icon">⚔️</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Сила</div>
+                            <div class="stat-value" id="player-power">10</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card gold">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Золото</div>
+                            <div class="stat-value" id="player-gold">100</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card exp">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Опыт</div>
+                            <div class="stat-bar">
+                                <div id="exp-bar" class="stat-bar-fill" style="width: 0%"></div>
+                            </div>
+                            <div class="stat-value"><span id="player-exp">0</span>/<span id="player-next-level">100</span></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card location">
+                        <div class="stat-icon">📍</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Локация</div>
+                            <div class="stat-value" id="player-location">Деревня</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="app.rest()">
+                        <span class="emoji">😴</span>
+                        Отдохнуть
+                    </button>
+                    <button class="action-btn" onclick="app.showAchievements()">
+                        <span class="emoji">🏆</span>
+                        Достижения
+                    </button>
+                    <button class="action-btn" onclick="app.showPets()">
+                        <span class="emoji">🐾</span>
+                        Питомцы
+                    </button>
+                </div>
+            </section>
+
+            <!-- Карта -->
+            <section id="map-view" class="view">
+                <h2>🗺️ Карта мира</h2>
+                <div class="locations-grid" id="locations-grid">
+                    <!-- Будет заполнено динамически -->
+                </div>
+            </section>
+
+            <!-- Бой -->
+            <section id="battle-view" class="view">
+                <h2>⚔️ Битва</h2>
+
+                <div id="battle-content">
+                    <div class="battle-select">
+                        <p>Выберите противника:</p>
+                        <div id="enemies-list" class="enemies-list">
+                            <!-- Будет заполнено динамически -->
+                        </div>
+                    </div>
+
+                    <div id="battle-arena" class="battle-arena" style="display: none;">
+                        <!-- Враг -->
+                        <div class="combatant enemy">
+                            <div class="combatant-avatar">👹</div>
+                            <h3 id="enemy-name">Противник</h3>
+                            <div class="hp-bar-container">
+                                <div id="enemy-hp-bar" class="hp-bar" style="width: 100%"></div>
+                            </div>
+                            <div class="hp-text"><span id="enemy-hp">100</span>/<span id="enemy-max-hp">100</span> HP</div>
+                        </div>
+
+                        <!-- Лог боя -->
+                        <div id="battle-log" class="battle-log"></div>
+
+                        <!-- Игрок -->
+                        <div class="combatant player">
+                            <div class="combatant-avatar">👤</div>
+                            <h3>Вы</h3>
+                            <div class="hp-bar-container">
+                                <div id="battle-player-hp-bar" class="hp-bar player" style="width: 100%"></div>
+                            </div>
+                            <div class="hp-text"><span id="battle-player-hp">100</span>/<span id="battle-player-max-hp">100</span> HP</div>
+                        </div>
+
+                        <!-- Действия -->
+                        <div class="battle-actions">
+                            <button class="battle-btn attack" onclick="app.attack()">
+                                ⚔️ Атака
+                            </button>
+                            <button class="battle-btn magic" onclick="app.showSpells()">
+                                🔮 Магия
+                            </button>
+                            <button class="battle-btn item" onclick="app.useItemInBattle()">
+                                🧪 Предмет
+                            </button>
+                            <button class="battle-btn flee" onclick="app.flee()">
+                                🏃 Бежать
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Инвентарь -->
+            <section id="inventory-view" class="view">
+                <h2>🎒 Инвентарь</h2>
+
+                <div class="inventory-tabs">
+                    <button class="tab-btn active" onclick="app.showInventoryTab('all')">Всё</button>
+                    <button class="tab-btn" onclick="app.showInventoryTab('weapons')">Оружие</button>
+                    <button class="tab-btn" onclick="app.showInventoryTab('armor')">Броня</button>
+                    <button class="tab-btn" onclick="app.showInventoryTab('potions')">Зелья</button>
+                </div>
+
+                <div id="inventory-content" class="inventory-grid">
+                    <!-- Будет заполнено динамически -->
+                </div>
+            </section>
+
+            <!-- Магазин -->
+            <section id="shop-view" class="view">
+                <h2>🏪 Магазин</h2>
+
+                <div class="player-gold-display">
+                    Ваше золото: <span id="shop-gold">0</span> 💰
+                </div>
+
+                <div class="shop-tabs">
+                    <button class="tab-btn active" onclick="app.showShopTab('weapons')">Оружие</button>
+                    <button class="tab-btn" onclick="app.showShopTab('armor')">Броня</button>
+                    <button class="tab-btn" onclick="app.showShopTab('potions')">Зелья</button>
+                </div>
+
+                <div id="shop-content" class="shop-grid">
+                    <!-- Будет заполнено динамически -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Модальные окна -->
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="app.closeModal()">&times;</span>
+                <div id="modal-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
