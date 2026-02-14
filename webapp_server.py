@@ -104,9 +104,12 @@ async def get_player(request):
         player = player_service.get_or_create(user_id)
 
         # Преобразуем в словарь
+        # Вычисляем опыт до следующего уровня
+        exp_to_next_level = player.level * 100
+
         player_data = {
             'id': player.user_id,
-            'name': player.name,
+            'name': f'Герой #{player.user_id}',  # Генерируем имя
             'level': player.level,
             'hp': player.hp,
             'max_hp': player.max_hp,
@@ -115,7 +118,7 @@ async def get_player(request):
             'power': player.power,
             'gold': player.gold,
             'exp': player.exp,
-            'exp_to_next_level': player.exp_to_next_level,
+            'exp_to_next_level': exp_to_next_level,
             'location': player.location,
             'inventory': player.inventory
         }
@@ -272,10 +275,11 @@ async def main():
     runner = web.AppRunner(app)
     await runner.setup()
 
-    site = web.TCPSite(runner, '0.0.0.0', 8080)
+    port = int(os.getenv('PORT', 8888))
+    site = web.TCPSite(runner, '0.0.0.0', port)
     await site.start()
 
-    logger.info("🚀 Mini App сервер запущен на http://0.0.0.0:8080")
+    logger.info(f"🚀 Mini App сервер запущен на http://0.0.0.0:{port}")
     logger.info("📱 Откройте в Telegram Web App или браузере")
 
     # Держим сервер запущенным
