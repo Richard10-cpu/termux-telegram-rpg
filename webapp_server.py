@@ -245,10 +245,23 @@ async def buy_item(request):
         return web.json_response({'error': str(e)}, status=500)
 
 
+async def healthcheck(request):
+    """Health check endpoint."""
+    return web.json_response({
+        'status': 'ok',
+        'service': 'termux-rpg-miniapp',
+        'version': '1.0.0'
+    })
+
+
 def setup_routes(app):
     """Настроить маршруты."""
     # Главная страница
     app.router.add_get('/', index)
+
+    # Health check
+    app.router.add_get('/health', healthcheck)
+    app.router.add_get('/healthz', healthcheck)  # Kubernetes style
 
     # API endpoints
     app.router.add_get('/api/player', get_player)
