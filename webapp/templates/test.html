@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Mini App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        button {
+            background: #3390ec;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #2979ff; }
+        #log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #3390ec;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 Termux RPG Mini App - Тест</h1>
+
+    <div class="card">
+        <h2>Статус сервера</h2>
+        <div id="server-status" class="status">Проверка...</div>
+    </div>
+
+    <div class="card">
+        <h2>API Тесты</h2>
+        <button onclick="testAPI()">Проверить API</button>
+        <button onclick="testPlayer()">Получить игрока</button>
+        <button onclick="testTravel()">Переместиться</button>
+        <div id="api-result"></div>
+    </div>
+
+    <div class="card">
+        <h2>Консоль</h2>
+        <div id="log"></div>
+        <button onclick="clearLog()">Очистить</button>
+    </div>
+
+    <script>
+        const apiUrl = window.location.origin + '/api';
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        async function checkServer() {
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                const statusDiv = document.getElementById('server-status');
+
+                if (data.status === 'ok') {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = `✅ Сервер работает: ${data.service} v${data.version}`;
+                    log('✅ Сервер доступен', 'success');
+                } else {
+                    throw new Error('Invalid response');
+                }
+            } catch (error) {
+                const statusDiv = document.getElementById('server-status');
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Ошибка подключения';
+                log('❌ Ошибка: ' + error.message, 'error');
+            }
+        }
+
+        async function testAPI() {
+            log('🔍 Тестирование API...');
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                log('✅ Health check: ' + JSON.stringify(data));
+
+                document.getElementById('api-result').innerHTML =
+                    '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                log('❌ Ошибка API: ' + error.message);
+            }
+        }
+
+        async function testPlayer() {
+            log('👤 Получение данных игрока...');
+            try {
+                const response = await fetch(apiUrl + '/player');
+                const data = await response.json();
+                log('✅ Игрок получен: ' + data.name);
+
+                document.getElementById('api-result').innerHTML =
+                    `<h3>Данные игрока:</h3>
+                    <p>Имя: ${data.name}</p>
+                    <p>Уровень: ${data.level}</p>
+                    <p>HP: ${data.hp}/${data.max_hp}</p>
+                    <p>Мана: ${data.mana}/${data.max_mana}</p>
+                    <p>Сила: ${data.power}</p>
+                    <p>Золото: ${data.gold}</p>
+                    <p>Локация: ${data.location}</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                log('❌ Ошибка получения игрока: ' + error.message);
+            }
+        }
+
+        async function testTravel() {
+            log('🗺️ Перемещение в лес...');
+            try {
+                const response = await fetch(apiUrl + '/travel', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ location: 'forest' })
+                });
+                const data = await response.json();
+                log('✅ Перемещение успешно: ' + data.location);
+
+                document.getElementById('api-result').innerHTML =
+                    '<p>✅ Перемещено в: ' + data.location + '</p>';
+
+                // Обновляем данные игрока
+                setTimeout(testPlayer, 500);
+            } catch (error) {
+                log('❌ Ошибка перемещения: ' + error.message);
+            }
+        }
+
+        // Проверка при загрузке
+        window.onload = () => {
+            log('🚀 Страница загружена');
+            log('🌐 URL: ' + window.location.href);
+            log('📡 API URL: ' + apiUrl);
+            checkServer();
+        };
+    </script>
+</body>
+</html>

@@ -10,5 +10,5 @@ find . -name "*.pyc" -delete 2>/dev/null
 
 # Активация venv и запуск
 source venv/bin/activate
-export PORT=8888
+export PORT=8080
 python3 -u webapp_server.py

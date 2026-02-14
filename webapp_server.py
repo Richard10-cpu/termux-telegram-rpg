@@ -97,6 +97,12 @@ async def index(request):
         return web.Response(text=f.read(), content_type='text/html')
 
 
+async def test_page(request):
+    """Тестовая страница для диагностики."""
+    with open('webapp/templates/test.html', 'r', encoding='utf-8') as f:
+        return web.Response(text=f.read(), content_type='text/html')
+
+
 async def get_player(request):
     """Получить данные игрока."""
     try:
@@ -258,6 +264,7 @@ def setup_routes(app):
     """Настроить маршруты."""
     # Главная страница
     app.router.add_get('/', index)
+    app.router.add_get('/test', test_page)  # Тестовая страница
 
     # Health check
     app.router.add_get('/health', healthcheck)
@@ -288,7 +295,7 @@ async def main():
     runner = web.AppRunner(app)
     await runner.setup()
 
-    port = int(os.getenv('PORT', 8888))
+    port = int(os.getenv('PORT', 8080))
     site = web.TCPSite(runner, '0.0.0.0', port)
     await site.start()
 
