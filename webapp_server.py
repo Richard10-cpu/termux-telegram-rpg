@@ -67,10 +67,26 @@ def validate_telegram_data(init_data: str, bot_token: str) -> dict | None:
 
 
 @middleware
+async def cors_middleware(request, handler):
+    """Middleware для CORS."""
+    # Обработка preflight запросов
+    if request.method == 'OPTIONS':
+        response = web.Response()
+    else:
+        response = await handler(request)
+
+    # Добавляем CORS заголовки
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
+
+
+@middleware
 async def auth_middleware(request, handler):
     """Middleware для аутентификации."""
     # Пропускаем статические файлы
-    if request.path.startswith('/static/') or request.path == '/':
+    if request.path.startswith('/static/') or request.path == '/' or request.path == '/health' or request.path == '/healthz':
         return await handler(request)
 
     # Для API проверяем заголовок Authorization
@@ -284,7 +300,7 @@ def setup_routes(app):
 
 async def init_app():
     """Инициализация приложения."""
-    app = web.Application(middlewares=[auth_middleware])
+    app = web.Application(middlewares=[cors_middleware, auth_middleware])
     setup_routes(app)
     return app
 
