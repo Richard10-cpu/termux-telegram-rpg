@@ -1,7 +1,27 @@
 // Telegram Web App инициализация
-const tg = window.Telegram.WebApp;
-tg.expand();
-tg.ready();
+// Проверяем, запущено ли приложение в Telegram
+const tg = window.Telegram?.WebApp || {
+    // Заглушка для тестирования в браузере
+    expand: () => console.log('🔧 Dev mode: expand()'),
+    ready: () => console.log('🔧 Dev mode: ready()'),
+    themeParams: {
+        bg_color: '#ffffff',
+        text_color: '#000000',
+        button_color: '#3390ec',
+        button_text_color: '#ffffff',
+        secondary_bg_color: '#f4f4f5'
+    },
+    initData: '',
+    showAlert: (msg) => alert(msg)
+};
+
+if (window.Telegram?.WebApp) {
+    tg.expand();
+    tg.ready();
+    console.log('✅ Запущено в Telegram');
+} else {
+    console.log('🌐 Запущено в браузере (dev mode)');
+}
 
 // Главный объект приложения
 const app = {
